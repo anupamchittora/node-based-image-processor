@@ -1,4 +1,7 @@
 #include "App.h"
+#include "NodeUI.h"
+#include <vector>
+#include <string>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -8,6 +11,13 @@
 #include <iostream>
 
 GLFWwindow* window;
+NodeUIManager uiManager;
+
+// Sample node list (for testing visual layout)
+std::vector<std::pair<int, std::string>> dummyNodes = {
+    {1, "Image Input"},
+    {2, "Output Node"}
+};
 
 bool App::Init()
 {
@@ -61,9 +71,15 @@ void App::Run()
         ImGui::End();
 
         // ?? Canvas
-        ImGui::Begin("Canvas");
-        ImGui::Text("This is where nodes will appear!");
+        ImGui::Begin("Canvas", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
+
+        // Loop over test nodes and render them
+        for (auto& [id, name] : dummyNodes) {
+            uiManager.RenderNode(id, name);
+        }
+
         ImGui::End();
+
 
         // ?? Properties
         ImGui::Begin("Properties");
