@@ -1,0 +1,31 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build results
+Debug/
+Release/
+x64/
+x86/
+*.obj
+*.pdb
+*.idb
+*.ipch
+*.log
+*.tlog
+*.tmp
+*.cache
+*.ilk
+*.exe
+
+# CMake or vcpkg
+CMakeFiles/
+CMakeCache.txt
+build/
+install/
+
+# Misc
+*.vcxproj.*
+*.opensdf
+*.sdf
