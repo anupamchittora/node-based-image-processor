@@ -1,4 +1,4 @@
-#include "App.h"
+﻿#include "App.h"
 #include "NodeUI.h"
 #include <vector>
 #include <string>
@@ -18,7 +18,11 @@ std::vector<std::pair<int, std::string>> dummyNodes = {
     {1, "Image Input"},
     {2, "Output Node"}
 };
-
+void SetupTestConnections() {
+    uiManager.connections = {
+        {1, 2}  // Connect Image Input → Output Node
+    };
+}
 bool App::Init()
 {
     if (!glfwInit())
@@ -49,8 +53,9 @@ bool App::Init()
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
-
+    SetupTestConnections();
     return true;
+    
 }
 
 void App::Run()
@@ -63,25 +68,38 @@ void App::Run()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // ?? Toolbar
+        // 🌟 Toolbar
         ImGui::Begin("Toolbar");
         if (ImGui::Button("Open Image")) { /* TODO */ }
         ImGui::SameLine();
         if (ImGui::Button("Save Image")) { /* TODO */ }
         ImGui::End();
 
-        // ?? Canvas
-        ImGui::Begin("Canvas", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
+        // 🎨 Canvas
+        ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize); // Make canvas fullscreen
+        ImGui::SetNextWindowPos(ImVec2(0, 0));
 
-        // Loop over test nodes and render them
+        ImGui::Begin("Canvas", nullptr,
+            ImGuiWindowFlags_NoCollapse |
+            ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoTitleBar |
+            ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoScrollbar |
+            ImGuiWindowFlags_NoBringToFrontOnFocus);
+
+        ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+        // Draw nodes
         for (auto& [id, name] : dummyNodes) {
             uiManager.RenderNode(id, name);
         }
+        uiManager.RenderConnections();
 
         ImGui::End();
 
 
-        // ?? Properties
+
+        // ⚙️ Properties
         ImGui::Begin("Properties");
         ImGui::Text("Adjust node parameters here.");
         ImGui::End();
