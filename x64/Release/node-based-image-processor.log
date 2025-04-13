@@ -1,0 +1,7 @@
+﻿  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 71 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  node-based-image-processor.vcxproj -> D:\Anupam\node-based-image-processor\x64\Release\node-based-image-processor.exe
+  'pwsh.exe' is not recognized as an internal or external command,
+  operable program or batch file.
