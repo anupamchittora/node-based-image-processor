@@ -4,26 +4,29 @@
 #include <string>
 #include "OutputNode.h"
 #include <opencv2/opencv.hpp>
-
+#include "BaseNode.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <iostream>
-
+#include "ImageInputNode.h"
 GLFWwindow* window;
 NodeUIManager uiManager;
+ImageInputNode inputNode(1);
 
 
 OutputNode outputNode(2); // ID = 2
 cv::Mat testImage;
 
 // Sample node list (for testing visual layout)
-std::vector<std::pair<int, std::string>> dummyNodes = {
-    {1, "Image Input"},
-    {2, "Output Node"}
+
+std::vector<BaseNode*> nodes = {
+     &inputNode,
+    &outputNode  // add more nodes as needed
 };
+
 void SetupTestConnections() {
     uiManager.connections = {
         {1, 2}  // Connect Image Input → Output Node
@@ -34,7 +37,7 @@ bool App::Init()
     if (!glfwInit())
         return false;
 
-    // Set up OpenGL version
+    // OpenGL settings
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -45,33 +48,28 @@ bool App::Init()
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
 
-    if (glewInit() != GLEW_OK)
-    {
+    if (glewInit() != GLEW_OK) {
         std::cerr << "Failed to initialize GLEW\n";
         return false;
     }
 
+    // ImGui setup
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-    ImGui::StyleColorsDark(); // Optional
-
+    ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
-    SetupTestConnections();
-    testImage = cv::imread("D:\\55.jpg"); // 🔁 Change path if needed
 
-    if (testImage.empty()) {
-        std::cerr << "Failed to load test image!\n";
-    }
-    else {
-        outputNode.SetInput(testImage);
-    }
+    // ⬇️ Add this after ImGui setup
+    inputNode.SetImagePath("D:\\55.jpg");
+    outputNode.SetInput(inputNode.outputImage);
+
+    SetupTestConnections(); // keep this at the end
 
     return true;
-    
 }
+
 
 void App::Run()
 {
@@ -105,16 +103,14 @@ void App::Run()
         ImDrawList* drawList = ImGui::GetWindowDrawList();
 
         // Draw nodes
-        for (auto& [id, name] : dummyNodes) {
-            uiManager.RenderNode(id, name);
+        for (BaseNode* node : nodes) {
+            uiManager.RenderNode(*node);
         }
+
         uiManager.RenderConnections();
         // Render image preview from OutputNode
-        if (outputNode.textureID) {
-            ImTextureID texID = (ImTextureID)(intptr_t)outputNode.textureID;
-            ImGui::SetCursorScreenPos(ImVec2(800, 250));
-            ImGui::Image(texID, ImVec2(256, 256));
-        }
+        
+
 
 
         ImGui::End();

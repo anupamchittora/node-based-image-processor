@@ -3,6 +3,7 @@
 #include <string>
 #include <imgui.h>
 #include <vector>
+#include "BaseNode.h"
 
 struct NodeUIState {
     ImVec2 position;
@@ -19,6 +20,7 @@ public:
     std::unordered_map<int, NodeUIState> nodeStates;
     std::vector<ConnectionVisual> connections;
 
-    void RenderNode(int id, const std::string& name);
+    void RenderNode(BaseNode& node);
+
     void RenderConnections();
 };

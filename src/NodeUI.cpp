@@ -1,36 +1,47 @@
 ﻿#include "NodeUI.h"
 #include <iostream>
+#include "OutputNode.h"
+void NodeUIManager::RenderNode(BaseNode& node) {
+    int id = node.id;
+    std::string name = node.name;
 
-void NodeUIManager::RenderNode(int id, const std::string& name) {
     NodeUIState& state = nodeStates[id];
 
     if (state.position.x == 0 && state.position.y == 0)
         state.position = ImVec2(100 + id * 180, 250);
 
-    ImDrawList* drawList = ImGui::GetWindowDrawList();
-    ImVec2 nodeSize = ImVec2(150, 60);
-
+    ImVec2 nodeSize = ImVec2(200, 140);
     ImVec2 start = state.position;
     ImVec2 end = ImVec2(start.x + nodeSize.x, start.y + nodeSize.y);
 
     ImGui::SetCursorScreenPos(start);
     ImGui::PushID(id);
+    ImGui::BeginGroup();
 
-    // Draw node background
-    drawList->AddRectFilled(start, end, IM_COL32(50, 50, 60, 255), 5.0f);
-    drawList->AddRect(start, end, IM_COL32(255, 255, 255, 255), 5.0f);
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    drawList->AddRectFilled(start, end, IM_COL32(40, 40, 50, 255), 6.0f);
+    drawList->AddRect(start, end, IM_COL32(255, 255, 255, 255), 6.0f);
     drawList->AddText(ImVec2(start.x + 10, start.y + 10), IM_COL32(255, 255, 255, 255), name.c_str());
 
-    // Drag behavior
-    ImGui::SetCursorScreenPos(start);
+    // ✅ Embedded image if it's an OutputNode
+    if (OutputNode* outNode = dynamic_cast<OutputNode*>(&node)) {
+        if (outNode->textureID) {
+            ImTextureID texID = (ImTextureID)(intptr_t)outNode->textureID;
+            ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
+            ImGui::Image(texID, ImVec2(180, 100));
+        }
+    }
+
     ImGui::InvisibleButton("node", nodeSize);
     if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
         state.position.x += ImGui::GetIO().MouseDelta.x;
         state.position.y += ImGui::GetIO().MouseDelta.y;
     }
 
+    ImGui::EndGroup();
     ImGui::PopID();
 }
+
 
 void NodeUIManager::RenderConnections() {
     ImDrawList* drawList = ImGui::GetWindowDrawList();

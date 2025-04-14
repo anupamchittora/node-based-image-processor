@@ -4,9 +4,10 @@
 
 class ImageInputNode : public BaseNode {
 public:
-    cv::Mat image;
+    cv::Mat outputImage;
+    std::string imagePath;
 
     ImageInputNode(int id);
-    void LoadImage(const std::string& path);
+    void SetImagePath(const std::string& path);
     void Process() override;
 };
