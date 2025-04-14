@@ -57,6 +57,8 @@ void NodeUIManager::RenderNode(BaseNode& node) {
         ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
         bool updated = false;
 
+        float controlWidth = nodeSize.x - 20;
+        ImGui::PushItemWidth(controlWidth);
         ImGui::Text("Brightness");
         updated |= ImGui::SliderFloat(("##brightness_" + std::to_string(id)).c_str(), &bc->brightness, -100.0f, 100.0f);
         if (ImGui::Button(("Reset B##" + std::to_string(id)).c_str())) {
@@ -75,27 +77,36 @@ void NodeUIManager::RenderNode(BaseNode& node) {
             bc->Process();
             graph.ProcessAll();
         }
+        ImGui::PopItemWidth();
     }
     if (BlurNode* blur = dynamic_cast<BlurNode*>(&node)) {
         ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
-
         ImGui::Text("Radius");
+
+        float sliderWidth = nodeSize.x - 5;  // total padding: 10 on each side
+        ImGui::PushItemWidth(sliderWidth);
         if (ImGui::SliderInt(("##blur_" + std::to_string(id)).c_str(), &blur->radius, 1, 20)) {
             blur->Process();
             graph.ProcessAll();
         }
+        ImGui::PopItemWidth();
     }
+
     if (ThresholdNode* th = dynamic_cast<ThresholdNode*>(&node)) {
         ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
         ImGui::Text("Threshold");
+        float sliderWidth = nodeSize.x - 20;  // total padding: 10 on each side
+        ImGui::PushItemWidth(sliderWidth);
         if (ImGui::SliderInt(("##threshold_" + std::to_string(id)).c_str(), &th->thresholdValue, 0, 255)) {
             th->Process();
             graph.ProcessAll();
         }
+        ImGui::PopItemWidth();
     }
     if (BlendNode* blend = dynamic_cast<BlendNode*>(&node)) {
         ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
-
+        float controlWidth = nodeSize.x - 20;
+        ImGui::PushItemWidth(controlWidth);
         const char* modes[] = { "Normal", "Multiply", "Screen", "Overlay", "Difference" };
         int current = static_cast<int>(blend->mode);
         if (ImGui::Combo(("Mode##" + std::to_string(id)).c_str(), &current, modes, 5)) {
@@ -108,11 +119,13 @@ void NodeUIManager::RenderNode(BaseNode& node) {
             blend->Process();
             graph.ProcessAll();
         }
+        ImGui::PopItemWidth();
     }
 
     if (EdgeDetectionNode* edge = dynamic_cast<EdgeDetectionNode*>(&node)) {
         ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
-
+        float controlWidth = nodeSize.x - 20;
+        ImGui::PushItemWidth(controlWidth);
         const char* modes[] = { "Sobel", "Canny" };
         int current = (edge->mode == EdgeMode::Sobel) ? 0 : 1;
         if (ImGui::Combo(("##edgemode_" + std::to_string(id)).c_str(), &current, modes, 2)) {
@@ -138,10 +151,12 @@ void NodeUIManager::RenderNode(BaseNode& node) {
                 graph.ProcessAll();
             }
         }
+        ImGui::PopItemWidth();
     }
     if (ConvolutionNode* conv = dynamic_cast<ConvolutionNode*>(&node)) {
         ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
-
+        float controlWidth = nodeSize.x - 20;
+        ImGui::PushItemWidth(controlWidth);
         static const char* presets[] = { "Sharpen", "Edge", "Emboss" };
         static int currentPreset = 0;
         if (ImGui::Combo(("Preset##" + std::to_string(id)).c_str(), &currentPreset, presets, IM_ARRAYSIZE(presets))) {
@@ -162,6 +177,7 @@ void NodeUIManager::RenderNode(BaseNode& node) {
             }
             ImGui::PopItemWidth();
         }
+        ImGui::PopItemWidth();
     }
 
 
