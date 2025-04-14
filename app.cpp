@@ -21,6 +21,7 @@
 #include "filters/EdgeDetectionNode.h"
 #include "filters/BlendNode.h"
 #include "filters/NoiseNode.h"
+#include "filters/ConvolutionNode.h"
 
 GrayscaleNode grayNode(3);
 ImageInputNode inputNode(1);
@@ -35,6 +36,7 @@ ThresholdNode thresholdNode(7);
 EdgeDetectionNode edgeNode(8);
 BlendNode blendNode(9);
 NoiseNode noiseNode(10);
+ConvolutionNode convNode(11);
 
 std::vector<BaseNode*> nodes = {
     &inputNode,
@@ -46,8 +48,10 @@ std::vector<BaseNode*> nodes = {
     &edgeNode,
     &blendNode,
     &noiseNode,
+    &convNode,
     &outputNode
 };
+
 
 bool App::Init()
 {
@@ -86,6 +90,7 @@ bool App::Init()
     graph.AddNode(&edgeNode);
     graph.AddNode(&blendNode);
     graph.AddNode(&noiseNode);
+    graph.AddNode(&convNode);
 
     inputNode.SetImagePath("D:\\55.jpg");
 

@@ -9,6 +9,7 @@
 #include "filters/EdgeDetectionNode.h"
 #include "filters/BlendNode.h"
 #include "filters/NoiseNode.h"
+#include "filters/ConvolutionNode.h"
 
 // ✅ This is the correct file for these
 void NodeGraph::AddNode(BaseNode* node) {
@@ -58,6 +59,11 @@ void NodeGraph::ProcessAll() {
             output = &edge->outputImage;
         else if (NoiseNode* noise = dynamic_cast<NoiseNode*>(fromNode))
             output = &noise->outputImage;
+        else if (ConvolutionNode* conv = dynamic_cast<ConvolutionNode*>(fromNode))
+            output = &conv->outputImage;
+
+        if (ConvolutionNode* convTarget = dynamic_cast<ConvolutionNode*>(toNode))
+            convTarget->SetInput(*output);
         if (ThresholdNode* thTarget = dynamic_cast<ThresholdNode*>(toNode))
             thTarget->SetInput(*output);
         if (BlurNode* blurTarget = dynamic_cast<BlurNode*>(toNode))

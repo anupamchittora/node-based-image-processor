@@ -6,6 +6,7 @@ D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\Blen
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\BlurNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\BlurNode.obj
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\BrightnessContrastNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\BrightnessContrastNode.obj
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\ColorChannelSplitterNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\ColorChannelSplitterNode.obj
+D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\ConvolutionNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\ConvolutionNode.obj
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\EdgeDetectionNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\EdgeDetectionNode.obj
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\GrayscaleNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\GrayscaleNode.obj
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\NoiseNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\NoiseNode.obj

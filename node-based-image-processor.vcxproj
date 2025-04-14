@@ -139,6 +139,7 @@
     <ClCompile Include="src\filters\BlurNode.cpp" />
     <ClCompile Include="src\filters\BrightnessContrastNode.cpp" />
     <ClCompile Include="src\filters\ColorChannelSplitterNode.cpp" />
+    <ClCompile Include="src\filters\ConvolutionNode.cpp" />
     <ClCompile Include="src\filters\EdgeDetectionNode.cpp" />
     <ClCompile Include="src\filters\GrayscaleNode.cpp" />
     <ClCompile Include="src\filters\NoiseNode.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="include\filters\BlurNode.h" />
     <ClInclude Include="include\filters\BrightnessContrastNode.h" />
     <ClInclude Include="include\filters\ColorChannelSplitterNode.h" />
+    <ClInclude Include="include\filters\ConvolutionNode.h" />
     <ClInclude Include="include\filters\EdgeDetectionNode.h" />
     <ClInclude Include="include\filters\GrayscaleNode.h" />
     <ClInclude Include="include\filters\NoiseNode.h" />

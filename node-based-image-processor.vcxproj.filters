@@ -75,6 +75,9 @@
     <ClCompile Include="src\filters\NoiseNode.cpp">
       <Filter>Source Files\src\filters</Filter>
     </ClCompile>
+    <ClCompile Include="src\filters\ConvolutionNode.cpp">
+      <Filter>Source Files\src\filters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -123,6 +126,9 @@
       <Filter>Header Files\include\filters</Filter>
     </ClInclude>
     <ClInclude Include="include\filters\NoiseNode.h">
+      <Filter>Header Files\include\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="include\filters\ConvolutionNode.h">
       <Filter>Header Files\include\filters</Filter>
     </ClInclude>
   </ItemGroup>

@@ -9,6 +9,7 @@
 #include "filters/BlendNode.h"
 #include "filters/NoiseNode.h" 
 #include "NodeGraph.h"
+#include "filters/ConvolutionNode.h"
 
 PendingConnection pendingConnection;
 extern NodeGraph graph;
@@ -36,6 +37,127 @@ void NodeUIManager::RenderNode(BaseNode& node) {
     drawList->AddText(ImVec2(start.x + 10, start.y + 10), IM_COL32(255, 255, 255, 255), name.c_str());
 
     // ... keep existing UI logic as-is ...
+    // Output preview (optional)
+    if (OutputNode* outNode = dynamic_cast<OutputNode*>(&node)) {
+        if (outNode->textureID) {
+            ImTextureID texID = (ImTextureID)(intptr_t)outNode->textureID;
+            ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
+            ImGui::Image(texID, ImVec2(180, 100));
+        }
+    }
+    if (BrightnessContrastNode* bc = dynamic_cast<BrightnessContrastNode*>(&node)) {
+        ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
+        bool updated = false;
+
+        ImGui::Text("Brightness");
+        updated |= ImGui::SliderFloat(("##brightness_" + std::to_string(id)).c_str(), &bc->brightness, -100.0f, 100.0f);
+        if (ImGui::Button(("Reset B##" + std::to_string(id)).c_str())) {
+            bc->brightness = 0.0f;
+            updated = true;
+        }
+
+        ImGui::Text("Contrast");
+        updated |= ImGui::SliderFloat(("##contrast_" + std::to_string(id)).c_str(), &bc->contrast, 0.0f, 3.0f);
+        if (ImGui::Button(("Reset C##" + std::to_string(id)).c_str())) {
+            bc->contrast = 1.0f;
+            updated = true;
+        }
+
+        if (updated) {
+            bc->Process();
+            graph.ProcessAll();
+        }
+    }
+    if (BlurNode* blur = dynamic_cast<BlurNode*>(&node)) {
+        ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
+
+        ImGui::Text("Radius");
+        if (ImGui::SliderInt(("##blur_" + std::to_string(id)).c_str(), &blur->radius, 1, 20)) {
+            blur->Process();
+            graph.ProcessAll();
+        }
+    }
+    if (ThresholdNode* th = dynamic_cast<ThresholdNode*>(&node)) {
+        ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
+        ImGui::Text("Threshold");
+        if (ImGui::SliderInt(("##threshold_" + std::to_string(id)).c_str(), &th->thresholdValue, 0, 255)) {
+            th->Process();
+            graph.ProcessAll();
+        }
+    }
+    if (BlendNode* blend = dynamic_cast<BlendNode*>(&node)) {
+        ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
+
+        const char* modes[] = { "Normal", "Multiply", "Screen", "Overlay", "Difference" };
+        int current = static_cast<int>(blend->mode);
+        if (ImGui::Combo(("Mode##" + std::to_string(id)).c_str(), &current, modes, 5)) {
+            blend->mode = static_cast<BlendMode>(current);
+            blend->Process();
+            graph.ProcessAll();
+        }
+
+        if (ImGui::SliderFloat(("Opacity##" + std::to_string(id)).c_str(), &blend->opacity, 0.0f, 1.0f)) {
+            blend->Process();
+            graph.ProcessAll();
+        }
+    }
+
+    if (EdgeDetectionNode* edge = dynamic_cast<EdgeDetectionNode*>(&node)) {
+        ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
+
+        const char* modes[] = { "Sobel", "Canny" };
+        int current = (edge->mode == EdgeMode::Sobel) ? 0 : 1;
+        if (ImGui::Combo(("##edgemode_" + std::to_string(id)).c_str(), &current, modes, 2)) {
+            edge->mode = (current == 0) ? EdgeMode::Sobel : EdgeMode::Canny;
+            edge->Process();
+            graph.ProcessAll();
+        }
+
+        if (edge->mode == EdgeMode::Sobel) {
+            if (ImGui::SliderInt(("Kernel##" + std::to_string(id)).c_str(), &edge->kernelSize, 1, 7)) {
+                if (edge->kernelSize % 2 == 0) edge->kernelSize += 1;  // kernel must be odd
+                edge->Process();
+                graph.ProcessAll();
+            }
+        }
+        else {
+            if (ImGui::SliderInt(("Thresh1##" + std::to_string(id)).c_str(), &edge->cannyThreshold1, 0, 255)) {
+                edge->Process();
+                graph.ProcessAll();
+            }
+            if (ImGui::SliderInt(("Thresh2##" + std::to_string(id)).c_str(), &edge->cannyThreshold2, 0, 255)) {
+                edge->Process();
+                graph.ProcessAll();
+            }
+        }
+    }
+    if (ConvolutionNode* conv = dynamic_cast<ConvolutionNode*>(&node)) {
+        ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
+
+        static const char* presets[] = { "Sharpen", "Edge", "Emboss" };
+        static int currentPreset = 0;
+        if (ImGui::Combo(("Preset##" + std::to_string(id)).c_str(), &currentPreset, presets, IM_ARRAYSIZE(presets))) {
+            conv->SetPreset(presets[currentPreset]);
+            conv->Process();
+            graph.ProcessAll();
+        }
+
+        ImGui::Text("Kernel:");
+        for (int i = 0; i < conv->kernel.size(); ++i) {
+            if (i % conv->kernelSize != 0)
+                ImGui::SameLine();
+
+            ImGui::PushItemWidth(40);
+            if (ImGui::InputFloat(("##k" + std::to_string(id) + "_" + std::to_string(i)).c_str(), &conv->kernel[i], 0.1f, 1.0f, "%.1f")) {
+                conv->Process();
+                graph.ProcessAll();
+            }
+            ImGui::PopItemWidth();
+        }
+    }
+
+
+
 
     ImGui::SetCursorScreenPos(start);
     ImGui::InvisibleButton("node_drag", nodeSize);
