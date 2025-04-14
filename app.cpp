@@ -111,9 +111,10 @@ void App::Run()
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+       
 
         ImGui::Begin("Toolbar");
-        if (ImGui::Button("Open Image")) { 
+        if (ImGui::Button("Open Image")) {
             const char* filters[] = { "*.jpg", "*.png", "*.bmp" };
             const char* file = tinyfd_openFileDialog("Select Image", "", 3, filters, NULL, 0);
             if (file && strlen(file) > 0) {
@@ -127,7 +128,16 @@ void App::Run()
             }
         }
         ImGui::SameLine();
-        if (ImGui::Button("Save Image")) { /* TODO */ }
+        if (ImGui::Button("Save Image")) { 
+            const char* filters[] = { "*.png", "*.jpg", "*.bmp" };
+            const char* file = tinyfd_saveFileDialog("Save Image", "output.png", 3, filters, nullptr);
+
+            if (file && strlen(file) > 0) {
+                if (!outputNode.SaveImage(file)) {
+                    std::cerr << "[App] Failed to save image.\n";
+                }
+            }
+        }
         ImGui::End();
 
         ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
@@ -142,7 +152,7 @@ void App::Run()
 
         ImGui::BeginChild("NodeCanvas", ImVec2(0, 0), false,
             ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar);
-
+        
         // 🖱️ Optional: right-click pan
         if (ImGui::IsWindowHovered() && ImGui::IsMouseDragging(ImGuiMouseButton_Right)) {
             ImVec2 delta = ImGui::GetIO().MouseDelta;

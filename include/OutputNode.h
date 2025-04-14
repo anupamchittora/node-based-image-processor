@@ -12,4 +12,6 @@ public:
     void Process() override;
     void CreateTexture();
     void FreeTexture();
+    bool SaveImage(const std::string& path);
+
 };

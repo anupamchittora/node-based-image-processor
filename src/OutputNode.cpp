@@ -12,6 +12,21 @@ void OutputNode::SetInput(const cv::Mat& image) {
     std::cout << "[OutputNode] Received image via connection!\n";
 
 }
+bool OutputNode::SaveImage(const std::string& path) {
+    if (inputImage.empty()) {
+        std::cerr << "[OutputNode] No image to save.\n";
+        return false;
+    }
+
+    if (cv::imwrite(path, inputImage)) {
+        std::cout << "[OutputNode] Saved image to: " << path << "\n";
+        return true;
+    }
+    else {
+        std::cerr << "[OutputNode] Failed to save image.\n";
+        return false;
+    }
+}
 
 void OutputNode::Process() {
     if (inputImage.empty()) return;
