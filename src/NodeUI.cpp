@@ -45,6 +45,14 @@ void NodeUIManager::RenderNode(BaseNode& node) {
             ImGui::Image(texID, ImVec2(180, 100));
         }
     }
+    if (ImageInputNode* inNode = dynamic_cast<ImageInputNode*>(&node)) {
+        if (inNode->textureID) {
+            ImTextureID texID = (ImTextureID)(intptr_t)inNode->textureID;
+            ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
+            ImGui::Image(texID, ImVec2(180, 100));
+        }
+    }
+
     if (BrightnessContrastNode* bc = dynamic_cast<BrightnessContrastNode*>(&node)) {
         ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
         bool updated = false;

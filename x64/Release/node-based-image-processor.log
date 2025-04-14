@@ -1,8 +1,8 @@
-﻿  app.cpp
+﻿  ImageInputNode.cpp
   Generating code
-  10 of 870 functions ( 1.1%) were compiled, the rest were copied from previous compilation.
+  4 of 871 functions ( 0.5%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    7 functions had inline decision re-evaluated but remain unchanged
+    14 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   node-based-image-processor.vcxproj -> D:\Anupam\node-based-image-processor\x64\Release\node-based-image-processor.exe
   'pwsh.exe' is not recognized as an internal or external command,
