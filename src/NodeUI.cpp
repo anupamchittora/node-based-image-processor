@@ -1,6 +1,8 @@
 ﻿#include "NodeUI.h"
 #include <iostream>
 #include "OutputNode.h"
+#include "NodeGraph.h"
+extern NodeGraph graph;
 void NodeUIManager::RenderNode(BaseNode& node) {
     int id = node.id;
     std::string name = node.name;
@@ -44,8 +46,15 @@ void NodeUIManager::RenderNode(BaseNode& node) {
     ImGui::InvisibleButton("input_pin", ImVec2(10, 10));
     if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left) && pendingConnection.isDragging) {
         connections.push_back({ pendingConnection.fromNodeID, id });
+
+        // 🔌 Register in logical graph
+        extern NodeGraph graph; // make sure graph is declared as extern
+        graph.Connect(pendingConnection.fromNodeID, id);
+        graph.ProcessAll();
+
         pendingConnection = PendingConnection();
     }
+
 
     // Output preview (optional)
     if (OutputNode* outNode = dynamic_cast<OutputNode*>(&node)) {

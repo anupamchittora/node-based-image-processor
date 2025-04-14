@@ -12,6 +12,10 @@
 #include <imgui_impl_opengl3.h>
 #include <iostream>
 #include "ImageInputNode.h"
+#include "NodeGraph.h"
+
+NodeGraph graph;
+
 GLFWwindow* window;
 NodeUIManager uiManager;
 ImageInputNode inputNode(1);
@@ -52,6 +56,12 @@ bool App::Init()
         std::cerr << "Failed to initialize GLEW\n";
         return false;
     }
+    graph.AddNode(&inputNode);
+    graph.AddNode(&outputNode);
+
+    // (optional) Add initial connection if testing without UI
+    // graph.Connect(inputNode.id, outputNode.id);
+    // graph.ProcessAll();
 
     // ImGui setup
     IMGUI_CHECKVERSION();

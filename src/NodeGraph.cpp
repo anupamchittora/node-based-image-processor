@@ -1,17 +1,23 @@
 #include "NodeGraph.h"
 
-std::shared_ptr<BaseNode> NodeGraph::AddNode(std::shared_ptr<BaseNode> node) {
-    node->id = nextID++;
-    nodes.push_back(node);
-    return node;
+void NodeGraph::AddNode(BaseNode* node) {
+    nodes[node->id] = node;
 }
 
 void NodeGraph::Connect(int fromID, int toID) {
-    connections.emplace_back(fromID, toID);
+    connections.push_back({ fromID, toID });
 }
 
 void NodeGraph::ProcessAll() {
-    for (auto& node : nodes) {
-        node->Process();
+    for (auto& [fromID, toID] : connections) {
+        BaseNode* fromNode = nodes[fromID];
+        BaseNode* toNode = nodes[toID];
+
+        ImageInputNode* input = dynamic_cast<ImageInputNode*>(fromNode);
+        OutputNode* output = dynamic_cast<OutputNode*>(toNode);
+
+        if (input && output) {
+            output->SetInput(input->outputImage);
+        }
     }
 }

@@ -1,16 +1,16 @@
 #pragma once
-#include "BaseNode.h"
-#include "Connection.h"
 #include <vector>
-#include <memory>
+#include <unordered_map>
+#include "BaseNode.h"
+#include "ImageInputNode.h"
+#include "OutputNode.h"
 
 class NodeGraph {
 public:
-    std::vector<std::shared_ptr<BaseNode>> nodes;
-    std::vector<Connection> connections;
-    int nextID = 1;
+    std::unordered_map<int, BaseNode*> nodes;
+    std::vector<std::pair<int, int>> connections; // from ? to
 
-    std::shared_ptr<BaseNode> AddNode(std::shared_ptr<BaseNode> node);
+    void AddNode(BaseNode* node);
     void Connect(int fromID, int toID);
     void ProcessAll();
 };

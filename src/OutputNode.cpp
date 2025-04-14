@@ -9,6 +9,8 @@ OutputNode::OutputNode(int id)
 void OutputNode::SetInput(const cv::Mat& image) {
     inputImage = image;
     Process();
+    std::cout << "[OutputNode] Received image via connection!\n";
+
 }
 
 void OutputNode::Process() {
