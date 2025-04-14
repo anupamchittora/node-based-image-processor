@@ -5,16 +5,17 @@
   BlurNode.cpp
   BrightnessContrastNode.cpp
   ColorChannelSplitterNode.cpp
+  EdgeDetectionNode.cpp
   GrayscaleNode.cpp
   ThresholdNode.cpp
   ImageInputNode.cpp
   NodeGraph.cpp
   NodeUI.cpp
-D:\Anupam\node-based-image-processor\node-based-image-processor\src\NodeUI.cpp(19,37): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\Anupam\node-based-image-processor\node-based-image-processor\src\NodeUI.cpp(20,37): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   OutputNode.cpp
   Generating code
   Previous IPDB not found, fall back to full compilation.
-  All 692 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  All 700 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   node-based-image-processor.vcxproj -> D:\Anupam\node-based-image-processor\x64\Release\node-based-image-processor.exe
   'pwsh.exe' is not recognized as an internal or external command,

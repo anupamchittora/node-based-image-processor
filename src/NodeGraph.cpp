@@ -6,6 +6,7 @@
 #include "filters/ColorChannelSplitterNode.h"
 #include "filters/BlurNode.h"
 #include "filters/ThresholdNode.h"
+#include "filters/EdgeDetectionNode.h"
 
 // ✅ This is the correct file for these
 void NodeGraph::AddNode(BaseNode* node) {
@@ -37,12 +38,14 @@ void NodeGraph::ProcessAll() {
             output = &blur->outputImage;
         else if (ThresholdNode* th = dynamic_cast<ThresholdNode*>(fromNode))
             output = &th->outputImage;
-        
+        else if (EdgeDetectionNode* edge = dynamic_cast<EdgeDetectionNode*>(fromNode))
+            output = &edge->outputImage;
         if (ThresholdNode* thTarget = dynamic_cast<ThresholdNode*>(toNode))
             thTarget->SetInput(*output);
         if (BlurNode* blurTarget = dynamic_cast<BlurNode*>(toNode))
             blurTarget->SetInput(*output);
-
+        if (EdgeDetectionNode* edgeTarget = dynamic_cast<EdgeDetectionNode*>(toNode))
+            edgeTarget->SetInput(*output);
         if (ColorChannelSplitterNode* target = dynamic_cast<ColorChannelSplitterNode*>(toNode))
             target->SetInput(*output);
 

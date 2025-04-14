@@ -5,6 +5,7 @@
 #include "filters/BrightnessContrastNode.h"
 #include "filters/BlurNode.h"
 #include "filters/ThresholdNode.h"
+#include "filters/EdgeDetectionNode.h"
 
 #include "NodeGraph.h"
 PendingConnection pendingConnection;
@@ -79,6 +80,36 @@ void NodeUIManager::RenderNode(BaseNode& node) {
             graph.ProcessAll();
         }
     }
+    if (EdgeDetectionNode* edge = dynamic_cast<EdgeDetectionNode*>(&node)) {
+        ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
+
+        const char* modes[] = { "Sobel", "Canny" };
+        int current = (edge->mode == EdgeMode::Sobel) ? 0 : 1;
+        if (ImGui::Combo(("##edgemode_" + std::to_string(id)).c_str(), &current, modes, 2)) {
+            edge->mode = (current == 0) ? EdgeMode::Sobel : EdgeMode::Canny;
+            edge->Process();
+            graph.ProcessAll();
+        }
+
+        if (edge->mode == EdgeMode::Sobel) {
+            if (ImGui::SliderInt(("Kernel##" + std::to_string(id)).c_str(), &edge->kernelSize, 1, 7)) {
+                if (edge->kernelSize % 2 == 0) edge->kernelSize += 1;  // kernel must be odd
+                edge->Process();
+                graph.ProcessAll();
+            }
+        }
+        else {
+            if (ImGui::SliderInt(("Thresh1##" + std::to_string(id)).c_str(), &edge->cannyThreshold1, 0, 255)) {
+                edge->Process();
+                graph.ProcessAll();
+            }
+            if (ImGui::SliderInt(("Thresh2##" + std::to_string(id)).c_str(), &edge->cannyThreshold2, 0, 255)) {
+                edge->Process();
+                graph.ProcessAll();
+            }
+        }
+    }
+
 
 
 
