@@ -139,6 +139,7 @@
     <ClCompile Include="src\filters\BrightnessContrastNode.cpp" />
     <ClCompile Include="src\filters\ColorChannelSplitterNode.cpp" />
     <ClCompile Include="src\filters\GrayscaleNode.cpp" />
+    <ClCompile Include="src\filters\ThresholdNode.cpp" />
     <ClCompile Include="src\ImageInputNode.cpp" />
     <ClCompile Include="src\NodeGraph.cpp" />
     <ClCompile Include="src\NodeUI.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="include\filters\BrightnessContrastNode.h" />
     <ClInclude Include="include\filters\ColorChannelSplitterNode.h" />
     <ClInclude Include="include\filters\GrayscaleNode.h" />
+    <ClInclude Include="include\filters\ThresholdNode.h" />
     <ClInclude Include="include\ImageInputNode.h" />
     <ClInclude Include="include\NodeGraph.h" />
     <ClInclude Include="include\NodeTypes.h" />

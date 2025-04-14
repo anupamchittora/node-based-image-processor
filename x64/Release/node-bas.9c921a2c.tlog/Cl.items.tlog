@@ -6,6 +6,7 @@ D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\Blur
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\BrightnessContrastNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\BrightnessContrastNode.obj
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\ColorChannelSplitterNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\ColorChannelSplitterNode.obj
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\GrayscaleNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\GrayscaleNode.obj
+D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\ThresholdNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\ThresholdNode.obj
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\ImageInputNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\ImageInputNode.obj
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\NodeGraph.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\NodeGraph.obj
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\NodeUI.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\NodeUI.obj

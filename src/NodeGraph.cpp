@@ -5,6 +5,7 @@
 #include "ImageInputNode.h"
 #include "filters/ColorChannelSplitterNode.h"
 #include "filters/BlurNode.h"
+#include "filters/ThresholdNode.h"
 
 // ✅ This is the correct file for these
 void NodeGraph::AddNode(BaseNode* node) {
@@ -34,9 +35,11 @@ void NodeGraph::ProcessAll() {
             output = &splitter->rChannel;  // Default to red channel for now
         else if (BlurNode* blur = dynamic_cast<BlurNode*>(fromNode))
             output = &blur->outputImage;
-
+        else if (ThresholdNode* th = dynamic_cast<ThresholdNode*>(fromNode))
+            output = &th->outputImage;
         
-
+        if (ThresholdNode* thTarget = dynamic_cast<ThresholdNode*>(toNode))
+            thTarget->SetInput(*output);
         if (BlurNode* blurTarget = dynamic_cast<BlurNode*>(toNode))
             blurTarget->SetInput(*output);
 

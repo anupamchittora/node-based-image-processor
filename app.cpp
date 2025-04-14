@@ -17,6 +17,7 @@
 #include "filters/BrightnessContrastNode.h"
 #include "filters/ColorChannelSplitterNode.h"
 #include "filters/BlurNode.h"
+#include "filters/ThresholdNode.h"
 
 GrayscaleNode grayNode(3);
 ImageInputNode inputNode(1);
@@ -27,6 +28,7 @@ NodeUIManager uiManager;
 BrightnessContrastNode bcNode(4);
 ColorChannelSplitterNode channelNode(5);  // Use unique ID
 BlurNode blurNode(6);
+ThresholdNode thresholdNode(7); // Use a unique ID
 
 std::vector<BaseNode*> nodes = {
     &inputNode,
@@ -34,10 +36,9 @@ std::vector<BaseNode*> nodes = {
     &bcNode,
     &channelNode,
     &blurNode,
+    &thresholdNode,
     &outputNode
 };
-
-
 
 bool App::Init()
 {
@@ -73,6 +74,7 @@ bool App::Init()
     graph.AddNode(&bcNode);
     graph.AddNode(&channelNode);
     graph.AddNode(&blurNode);
+    graph.AddNode(&thresholdNode);
 
     // Load image
     inputNode.SetImagePath("D:\\55.jpg");

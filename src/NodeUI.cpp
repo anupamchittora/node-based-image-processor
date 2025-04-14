@@ -4,6 +4,7 @@
 #include <imgui_internal.h>
 #include "filters/BrightnessContrastNode.h"
 #include "filters/BlurNode.h"
+#include "filters/ThresholdNode.h"
 
 #include "NodeGraph.h"
 PendingConnection pendingConnection;
@@ -70,6 +71,15 @@ void NodeUIManager::RenderNode(BaseNode& node) {
             graph.ProcessAll();
         }
     }
+    if (ThresholdNode* th = dynamic_cast<ThresholdNode*>(&node)) {
+        ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
+        ImGui::Text("Threshold");
+        if (ImGui::SliderInt(("##threshold_" + std::to_string(id)).c_str(), &th->thresholdValue, 0, 255)) {
+            th->Process();
+            graph.ProcessAll();
+        }
+    }
+
 
 
     ImGui::SetCursorScreenPos(start);
