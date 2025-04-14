@@ -15,12 +15,18 @@ struct ConnectionVisual {
     int toID;
 };
 
+struct PendingConnection {
+    bool isDragging = false;
+    int fromNodeID = -1;
+    ImVec2 startPos;
+};
+
 class NodeUIManager {
 public:
     std::unordered_map<int, NodeUIState> nodeStates;
     std::vector<ConnectionVisual> connections;
+    PendingConnection pendingConnection;
 
     void RenderNode(BaseNode& node);
-
     void RenderConnections();
 };
