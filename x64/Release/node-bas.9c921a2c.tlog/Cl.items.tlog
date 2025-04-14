@@ -12,6 +12,7 @@ D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\Gray
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\NoiseNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\NoiseNode.obj
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\filters\ThresholdNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\ThresholdNode.obj
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\ImageInputNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\ImageInputNode.obj
+D:\Anupam\node-based-image-processor\node-based-image-processor\src\NodeFactory.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\NodeFactory.obj
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\NodeGraph.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\NodeGraph.obj
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\NodeUI.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\NodeUI.obj
 D:\Anupam\node-based-image-processor\node-based-image-processor\src\OutputNode.cpp;D:\Anupam\node-based-image-processor\node-based-image-processor\x64\Release\OutputNode.obj

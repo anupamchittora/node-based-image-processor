@@ -145,6 +145,7 @@
     <ClCompile Include="src\filters\NoiseNode.cpp" />
     <ClCompile Include="src\filters\ThresholdNode.cpp" />
     <ClCompile Include="src\ImageInputNode.cpp" />
+    <ClCompile Include="src\NodeFactory.cpp" />
     <ClCompile Include="src\NodeGraph.cpp" />
     <ClCompile Include="src\NodeUI.cpp" />
     <ClCompile Include="src\OutputNode.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="include\filters\NoiseNode.h" />
     <ClInclude Include="include\filters\ThresholdNode.h" />
     <ClInclude Include="include\ImageInputNode.h" />
+    <ClInclude Include="include\NodeFactory.h" />
     <ClInclude Include="include\NodeGraph.h" />
     <ClInclude Include="include\NodeTypes.h" />
     <ClInclude Include="include\NodeUI.h" />

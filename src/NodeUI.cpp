@@ -10,7 +10,9 @@
 #include "filters/NoiseNode.h" 
 #include "NodeGraph.h"
 #include "filters/ConvolutionNode.h"
+#include "filters/ColorChannelSplitterNode.h"
 
+#include "tinyfiledialogs/tinyfiledialogs.h"
 PendingConnection pendingConnection;
 extern NodeGraph graph;
 
@@ -44,12 +46,31 @@ void NodeUIManager::RenderNode(BaseNode& node) {
             ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
             ImGui::Image(texID, ImVec2(180, 100));
         }
+        ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 135));
+        if (ImGui::Button(("Save##" + std::to_string(id)).c_str())) {
+            const char* filters[] = { "*.png", "*.jpg", "*.bmp" };
+            const char* file = tinyfd_saveFileDialog("Save Image", "output.png", 3, filters, nullptr);
+            if (file && strlen(file) > 0) {
+                if (!outNode->SaveImage(file)) {
+                    std::cerr << "[OutputNode] Failed to save image.\n";
+                }
+            }
+        }
     }
     if (ImageInputNode* inNode = dynamic_cast<ImageInputNode*>(&node)) {
         if (inNode->textureID) {
             ImTextureID texID = (ImTextureID)(intptr_t)inNode->textureID;
             ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
             ImGui::Image(texID, ImVec2(180, 100));
+        }
+        ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 135));  // Position below image
+        if (ImGui::Button(("Load##" + std::to_string(id)).c_str())) {
+            const char* filters[] = { "*.jpg", "*.png", "*.bmp" };
+            const char* file = tinyfd_openFileDialog("Select Image", "", 3, filters, NULL, 0);
+            if (file && strlen(file) > 0) {
+                inNode->SetImagePath(file);
+                graph.ProcessAll();
+            }
         }
     }
 
@@ -296,5 +317,26 @@ void NodeUIManager::RenderConnections() {
     }
     if (pendingConnection.isDragging && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
         pendingConnection = PendingConnection();
+    }
+}
+void NodeUIManager::SpawnNode(const std::string& type) {
+    static int nextID = 1000; // 👈 Avoid collision with manually added nodes
+
+    BaseNode* newNode = nullptr;
+
+    if (type == "ImageInput") newNode = new ImageInputNode(nextID);
+    else if (type == "Output") newNode = new OutputNode(nextID);
+    else if (type == "BrightnessContrast") newNode = new BrightnessContrastNode(nextID);
+    else if (type == "ChannelSplitter") newNode = new ColorChannelSplitterNode(nextID);
+    else if (type == "Blur") newNode = new BlurNode(nextID);
+    else if (type == "Threshold") newNode = new ThresholdNode(nextID);
+    else if (type == "Edge") newNode = new EdgeDetectionNode(nextID);
+    else if (type == "Blend") newNode = new BlendNode(nextID);
+    else if (type == "Noise") newNode = new NoiseNode(nextID);
+
+    if (newNode) {
+        graph.AddNode(newNode);
+        nodeStates[newNode->id].position = ImVec2(300, 300);  // Default spawn position
+        nextID++;
     }
 }

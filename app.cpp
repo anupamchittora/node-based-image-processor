@@ -22,6 +22,8 @@
 #include "filters/BlendNode.h"
 #include "filters/NoiseNode.h"
 #include "filters/ConvolutionNode.h"
+#include "NodeFactory.h"
+
 #include "tinyfiledialogs/tinyfiledialogs.h"
 GrayscaleNode grayNode(3);
 ImageInputNode inputNode(1);
@@ -51,7 +53,7 @@ std::vector<BaseNode*> nodes = {
     &convNode,
     &outputNode
 };
-
+static int nextID = 1000;
 
 bool App::Init()
 {
@@ -111,9 +113,31 @@ void App::Run()
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-       
+        ImGui::Begin("Toolbox");
+
+        static const char* nodeTypes[] = {
+            "Image Input", "Output Node", "Grayscale", "Brightness/Contrast",
+            "Channel Splitter", "Gaussian Blur", "Threshold",
+            "Edge Detection", "Blend", "Noise Generator"
+        };
+
+        static int selected = 0;
+        ImGui::Combo("Node Type", &selected, nodeTypes, IM_ARRAYSIZE(nodeTypes));
+
+        if (ImGui::Button("Add Node")) {
+            BaseNode* newNode = CreateNodeByName(nodeTypes[selected], nextID++);
+            if (newNode) {
+                nodes.push_back(newNode);
+                graph.AddNode(newNode);
+                uiManager.nodeStates[newNode->id].position = ImVec2(300, 300); // spawn pos
+            }
+        }
+
+        ImGui::End();
+
 
         ImGui::Begin("Toolbar");
+
         if (ImGui::Button("Open Image")) {
             const char* filters[] = { "*.jpg", "*.png", "*.bmp" };
             const char* file = tinyfd_openFileDialog("Select Image", "", 3, filters, NULL, 0);

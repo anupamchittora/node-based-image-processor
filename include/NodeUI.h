@@ -26,7 +26,8 @@ public:
     std::unordered_map<int, NodeUIState> nodeStates;
     std::vector<ConnectionVisual> connections;
     PendingConnection pendingConnection;
-    
+    void SpawnNode(const std::string& type);
+
     void RenderNode(BaseNode& node);
     void RenderConnections();
 };
