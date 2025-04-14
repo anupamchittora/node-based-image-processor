@@ -1,9 +1,8 @@
-﻿  NodeUI.cpp
-D:\Anupam\node-based-image-processor\node-based-image-processor\src\NodeUI.cpp(8,37): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+﻿  OutputNode.cpp
   Generating code
-  38 of 373 functions (10.2%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+  18 of 413 functions ( 4.4%) were compiled, the rest were copied from previous compilation.
+    7 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   node-based-image-processor.vcxproj -> D:\Anupam\node-based-image-processor\x64\Release\node-based-image-processor.exe
   'pwsh.exe' is not recognized as an internal or external command,

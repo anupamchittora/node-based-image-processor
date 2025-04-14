@@ -138,6 +138,7 @@
     <ClCompile Include="src\ImageInputNode.cpp" />
     <ClCompile Include="src\NodeGraph.cpp" />
     <ClCompile Include="src\NodeUI.cpp" />
+    <ClCompile Include="src\OutputNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -147,6 +148,7 @@
     <ClInclude Include="include\NodeGraph.h" />
     <ClInclude Include="include\NodeTypes.h" />
     <ClInclude Include="include\NodeUI.h" />
+    <ClInclude Include="include\OutputNode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

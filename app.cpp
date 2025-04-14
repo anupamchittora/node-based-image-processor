@@ -2,6 +2,8 @@
 #include "NodeUI.h"
 #include <vector>
 #include <string>
+#include "OutputNode.h"
+#include <opencv2/opencv.hpp>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -12,6 +14,10 @@
 
 GLFWwindow* window;
 NodeUIManager uiManager;
+
+
+OutputNode outputNode(2); // ID = 2
+cv::Mat testImage;
 
 // Sample node list (for testing visual layout)
 std::vector<std::pair<int, std::string>> dummyNodes = {
@@ -54,6 +60,15 @@ bool App::Init()
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
     SetupTestConnections();
+    testImage = cv::imread("D:\\55.jpg"); // 🔁 Change path if needed
+
+    if (testImage.empty()) {
+        std::cerr << "Failed to load test image!\n";
+    }
+    else {
+        outputNode.SetInput(testImage);
+    }
+
     return true;
     
 }
@@ -94,6 +109,13 @@ void App::Run()
             uiManager.RenderNode(id, name);
         }
         uiManager.RenderConnections();
+        // Render image preview from OutputNode
+        if (outputNode.textureID) {
+            ImTextureID texID = (ImTextureID)(intptr_t)outputNode.textureID;
+            ImGui::SetCursorScreenPos(ImVec2(800, 250));
+            ImGui::Image(texID, ImVec2(256, 256));
+        }
+
 
         ImGui::End();
 

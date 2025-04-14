@@ -42,6 +42,9 @@
     <ClCompile Include="src\NodeUI.cpp">
       <Filter>Source Files\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\OutputNode.cpp">
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -63,6 +66,9 @@
       <Filter>Header Files\include</Filter>
     </ClInclude>
     <ClInclude Include="include\NodeUI.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OutputNode.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
   </ItemGroup>
