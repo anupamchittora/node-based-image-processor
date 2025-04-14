@@ -141,6 +141,7 @@
     <ClCompile Include="src\filters\ColorChannelSplitterNode.cpp" />
     <ClCompile Include="src\filters\EdgeDetectionNode.cpp" />
     <ClCompile Include="src\filters\GrayscaleNode.cpp" />
+    <ClCompile Include="src\filters\NoiseNode.cpp" />
     <ClCompile Include="src\filters\ThresholdNode.cpp" />
     <ClCompile Include="src\ImageInputNode.cpp" />
     <ClCompile Include="src\NodeGraph.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="include\filters\ColorChannelSplitterNode.h" />
     <ClInclude Include="include\filters\EdgeDetectionNode.h" />
     <ClInclude Include="include\filters\GrayscaleNode.h" />
+    <ClInclude Include="include\filters\NoiseNode.h" />
     <ClInclude Include="include\filters\ThresholdNode.h" />
     <ClInclude Include="include\ImageInputNode.h" />
     <ClInclude Include="include\NodeGraph.h" />

@@ -4,6 +4,7 @@ d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\node
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\nodegraph.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\imageinputnode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\thresholdnode.obj
+d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\noisenode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\grayscalenode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\edgedetectionnode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\colorchannelsplitternode.obj

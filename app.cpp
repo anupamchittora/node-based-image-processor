@@ -20,6 +20,7 @@
 #include "filters/ThresholdNode.h"
 #include "filters/EdgeDetectionNode.h"
 #include "filters/BlendNode.h"
+#include "filters/NoiseNode.h"
 
 GrayscaleNode grayNode(3);
 ImageInputNode inputNode(1);
@@ -28,11 +29,12 @@ NodeGraph graph;
 GLFWwindow* window;
 NodeUIManager uiManager;
 BrightnessContrastNode bcNode(4);
-ColorChannelSplitterNode channelNode(5);  // Use unique ID
+ColorChannelSplitterNode channelNode(5);
 BlurNode blurNode(6);
-ThresholdNode thresholdNode(7); // Use a unique ID
-EdgeDetectionNode edgeNode(8);  // Use a unique ID
+ThresholdNode thresholdNode(7);
+EdgeDetectionNode edgeNode(8);
 BlendNode blendNode(9);
+NoiseNode noiseNode(10);
 
 std::vector<BaseNode*> nodes = {
     &inputNode,
@@ -43,10 +45,9 @@ std::vector<BaseNode*> nodes = {
     &thresholdNode,
     &edgeNode,
     &blendNode,
+    &noiseNode,
     &outputNode
 };
-
-
 
 bool App::Init()
 {
@@ -75,7 +76,6 @@ bool App::Init()
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
-    // NodeGraph setup
     graph.AddNode(&inputNode);
     graph.AddNode(&grayNode);
     graph.AddNode(&outputNode);
@@ -85,11 +85,10 @@ bool App::Init()
     graph.AddNode(&thresholdNode);
     graph.AddNode(&edgeNode);
     graph.AddNode(&blendNode);
+    graph.AddNode(&noiseNode);
 
-    // Load image
     inputNode.SetImagePath("D:\\55.jpg");
 
-    // Clear any default UI connections
     uiManager.connections.clear();
     graph.connections.clear();
 
@@ -122,8 +121,19 @@ void App::Run()
             ImGuiWindowFlags_NoResize |
             ImGuiWindowFlags_NoTitleBar |
             ImGuiWindowFlags_NoMove |
-            ImGuiWindowFlags_NoScrollbar |
             ImGuiWindowFlags_NoBringToFrontOnFocus);
+
+        ImGui::BeginChild("NodeCanvas", ImVec2(0, 0), false,
+            ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar);
+
+        // 🖱️ Optional: right-click pan
+        if (ImGui::IsWindowHovered() && ImGui::IsMouseDragging(ImGuiMouseButton_Right)) {
+            ImVec2 delta = ImGui::GetIO().MouseDelta;
+            for (auto& [id, state] : uiManager.nodeStates) {
+                state.position.x += delta.x;
+                state.position.y += delta.y;
+            }
+        }
 
         ImDrawList* drawList = ImGui::GetWindowDrawList();
 
@@ -133,6 +143,12 @@ void App::Run()
 
         uiManager.RenderConnections();
 
+        // ✅ Simulate large canvas for scroll
+        ImGui::SetCursorScreenPos(ImVec2(3000, 2000));
+        ImGui::InvisibleButton("dummy_scroll", ImVec2(1, 1));
+
+
+        ImGui::EndChild();
         ImGui::End();
 
         ImGui::Begin("Properties");
