@@ -7,6 +7,7 @@ d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\thre
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\noisenode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\grayscalenode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\edgedetectionnode.obj
+d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\convolutionnode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\colorchannelsplitternode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\brightnesscontrastnode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\blurnode.obj

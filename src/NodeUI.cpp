@@ -175,21 +175,39 @@ void NodeUIManager::RenderConnections() {
     ImVec2 scrollOffset(ImGui::GetScrollX(), ImGui::GetScrollY());
     ImDrawList* drawList = ImGui::GetWindowDrawList();
 
-    for (const auto& conn : connections) {
+    for (size_t i = 0; i < connections.size(); ++i) {
+        const auto& conn = connections[i];
         ImVec2 fromPos = nodeStates[conn.fromID].position;
         ImVec2 toPos = nodeStates[conn.toID].position;
 
-        fromPos = ImVec2(fromPos.x - scrollOffset.x, fromPos.y - scrollOffset.y);
-        toPos = ImVec2(toPos.x - scrollOffset.x, toPos.y - scrollOffset.y);
+        fromPos = ImVec2(fromPos.x - scrollOffset.x + 200, fromPos.y - scrollOffset.y + 70);
+        toPos = ImVec2(toPos.x - scrollOffset.x, toPos.y - scrollOffset.y + 70);
 
-        ImVec2 p1 = ImVec2(fromPos.x + 200, fromPos.y + 70);
-        ImVec2 p2 = ImVec2(toPos.x, toPos.y + 70);
+        ImVec2 cp1 = ImVec2(fromPos.x + 50, fromPos.y);
+        ImVec2 cp2 = ImVec2(toPos.x - 50, toPos.y);
 
-        ImVec2 cp1 = ImVec2(p1.x + 50, p1.y);
-        ImVec2 cp2 = ImVec2(p2.x - 50, p2.y);
+        ImDrawList* drawList = ImGui::GetWindowDrawList();
+        drawList->AddBezierCubic(fromPos, cp1, cp2, toPos, IM_COL32(200, 200, 100, 255), 3.0f);
 
-        drawList->AddBezierCubic(p1, cp1, cp2, p2, IM_COL32(200, 200, 100, 255), 3.0f);
+        // 🧠 Add a small invisible button at the center of the curve
+        ImVec2 midPoint = ImVec2((fromPos.x + toPos.x) * 0.5f, (fromPos.y + toPos.y) * 0.5f);
+        ImGui::SetCursorScreenPos(ImVec2(midPoint.x - 8, midPoint.y - 8));
+        ImGui::InvisibleButton(("conn_" + std::to_string(i)).c_str(), ImVec2(16, 16));
+
+        // 🗑️ If right-clicked, remove the connection
+        if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+            connections.erase(connections.begin() + i);
+            graph.connections.erase(
+                std::remove_if(graph.connections.begin(), graph.connections.end(),
+                    [&](const auto& gconn) {
+                        return gconn.first == conn.fromID && gconn.second == conn.toID;
+                    }),
+                graph.connections.end());
+            graph.ProcessAll();
+            break;  // since the connection list is now changed
+        }
     }
+
 
     for (const auto& [id, state] : nodeStates) {
         ImVec2 outPin = ImVec2(state.position.x + 200 - scrollOffset.x, state.position.y + 70 - scrollOffset.y);
