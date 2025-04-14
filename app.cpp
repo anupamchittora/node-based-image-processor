@@ -22,7 +22,7 @@
 #include "filters/BlendNode.h"
 #include "filters/NoiseNode.h"
 #include "filters/ConvolutionNode.h"
-
+#include "tinyfiledialogs/tinyfiledialogs.h"
 GrayscaleNode grayNode(3);
 ImageInputNode inputNode(1);
 OutputNode outputNode(2);
@@ -92,7 +92,7 @@ bool App::Init()
     graph.AddNode(&noiseNode);
     graph.AddNode(&convNode);
 
-    inputNode.SetImagePath("D:\\55.jpg");
+    //inputNode.SetImagePath("D:\\55.jpg");
 
     uiManager.connections.clear();
     graph.connections.clear();
@@ -113,7 +113,19 @@ void App::Run()
         ImGui::NewFrame();
 
         ImGui::Begin("Toolbar");
-        if (ImGui::Button("Open Image")) { /* TODO */ }
+        if (ImGui::Button("Open Image")) { 
+            const char* filters[] = { "*.jpg", "*.png", "*.bmp" };
+            const char* file = tinyfd_openFileDialog("Select Image", "", 3, filters, NULL, 0);
+            if (file && strlen(file) > 0) {
+                inputNode.SetImagePath(file);
+                if (!inputNode.outputImage.empty()) {
+                    graph.ProcessAll();
+                }
+                else {
+                    std::cerr << "[Error] Could not load image from: " << file << "\n";
+                }
+            }
+        }
         ImGui::SameLine();
         if (ImGui::Button("Save Image")) { /* TODO */ }
         ImGui::End();
