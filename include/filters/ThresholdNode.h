@@ -8,6 +8,7 @@ public:
     cv::Mat outputImage;
 
     int thresholdValue = 128;
+    cv::Mat GetOutput() const override { return outputImage; }
 
     ThresholdNode(int id);
     void SetInput(const cv::Mat& image);

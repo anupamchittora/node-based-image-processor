@@ -5,9 +5,11 @@ d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\node
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\imageinputnode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\thresholdnode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\grayscalenode.obj
+d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\edgedetectionnode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\colorchannelsplitternode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\brightnesscontrastnode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\blurnode.obj
+d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\blendnode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\connection.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\basenode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\main.obj

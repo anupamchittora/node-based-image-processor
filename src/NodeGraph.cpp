@@ -7,6 +7,7 @@
 #include "filters/BlurNode.h"
 #include "filters/ThresholdNode.h"
 #include "filters/EdgeDetectionNode.h"
+#include "filters/BlendNode.h"
 
 // ✅ This is the correct file for these
 void NodeGraph::AddNode(BaseNode* node) {
@@ -15,7 +16,21 @@ void NodeGraph::AddNode(BaseNode* node) {
 
 void NodeGraph::Connect(int fromID, int toID) {
     connections.push_back({ fromID, toID });
+
+    BaseNode* from = nodes[fromID];
+    BaseNode* to = nodes[toID];
+
+    if (!from || !to) return;
+
+    // 🔄 Handle BlendNode's multiple inputs
+    if (BlendNode* blend = dynamic_cast<BlendNode*>(to)) {
+        if (blend->inputA.empty())
+            blend->inputA = from->GetOutput();
+        else
+            blend->inputB = from->GetOutput();
+    }
 }
+
 
 void NodeGraph::ProcessAll() {
     for (auto& [fromID, toID] : connections) {
@@ -57,5 +72,12 @@ void NodeGraph::ProcessAll() {
             else if (OutputNode* out = dynamic_cast<OutputNode*>(toNode))
                 out->SetInput(*output);
         }
+        if (BlendNode* blendTarget = dynamic_cast<BlendNode*>(toNode)) {
+            if (blendTarget->inputA.empty())
+                blendTarget->SetInputA(*output);
+            else
+                blendTarget->SetInputB(*output);
+        }
+
     }
 }

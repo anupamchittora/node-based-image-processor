@@ -18,6 +18,7 @@ public:
     int cannyThreshold2 = 150;
 
     EdgeDetectionNode(int id);
+    cv::Mat GetOutput() const override { return outputImage; }
 
     void SetInput(const cv::Mat& image);
     void Process() override;

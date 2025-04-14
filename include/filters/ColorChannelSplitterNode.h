@@ -15,6 +15,7 @@ public:
     cv::Mat GetOutput() const override {
         return rChannel;  // Could allow toggling later
     }
+    
 
     void Process() override;
 };

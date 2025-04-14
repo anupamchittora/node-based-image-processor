@@ -6,6 +6,7 @@
 #include "filters/BlurNode.h"
 #include "filters/ThresholdNode.h"
 #include "filters/EdgeDetectionNode.h"
+#include "filters/BlendNode.h"
 
 #include "NodeGraph.h"
 PendingConnection pendingConnection;
@@ -80,6 +81,23 @@ void NodeUIManager::RenderNode(BaseNode& node) {
             graph.ProcessAll();
         }
     }
+    if (BlendNode* blend = dynamic_cast<BlendNode*>(&node)) {
+        ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
+
+        const char* modes[] = { "Normal", "Multiply", "Screen", "Overlay", "Difference" };
+        int current = static_cast<int>(blend->mode);
+        if (ImGui::Combo(("Mode##" + std::to_string(id)).c_str(), &current, modes, 5)) {
+            blend->mode = static_cast<BlendMode>(current);
+            blend->Process();
+            graph.ProcessAll();
+        }
+
+        if (ImGui::SliderFloat(("Opacity##" + std::to_string(id)).c_str(), &blend->opacity, 0.0f, 1.0f)) {
+            blend->Process();
+            graph.ProcessAll();
+        }
+    }
+
     if (EdgeDetectionNode* edge = dynamic_cast<EdgeDetectionNode*>(&node)) {
         ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
 
@@ -125,6 +143,9 @@ void NodeUIManager::RenderNode(BaseNode& node) {
     ImGui::PopID();
 }
 
+// Updated NodeUI.cpp: Render two input pins for BlendNode
+
+
 void NodeUIManager::RenderConnections() {
     ImDrawList* drawList = ImGui::GetWindowDrawList();
 
@@ -132,8 +153,8 @@ void NodeUIManager::RenderConnections() {
         ImVec2 fromPos = nodeStates[conn.fromID].position;
         ImVec2 toPos = nodeStates[conn.toID].position;
 
-        ImVec2 p1 = ImVec2(fromPos.x + 200, fromPos.y + 70); // Right middle of source
-        ImVec2 p2 = ImVec2(toPos.x, toPos.y + 70);           // Left middle of target
+        ImVec2 p1 = ImVec2(fromPos.x + 200, fromPos.y + 70);
+        ImVec2 p2 = ImVec2(toPos.x, toPos.y + 70);
 
         ImVec2 cp1 = ImVec2(p1.x + 50, p1.y);
         ImVec2 cp2 = ImVec2(p2.x - 50, p2.y);
@@ -141,12 +162,8 @@ void NodeUIManager::RenderConnections() {
         drawList->AddBezierCubic(p1, cp1, cp2, p2, IM_COL32(200, 200, 100, 255), 3.0f);
     }
 
-    // Render interactive pins and connection logic
     for (const auto& [id, state] : nodeStates) {
         ImVec2 outPin = ImVec2(state.position.x + 200, state.position.y + 70);
-        ImVec2 inPin = ImVec2(state.position.x, state.position.y + 70);
-
-        // Output pin
         ImGui::SetCursorScreenPos(ImVec2(outPin.x - 5, outPin.y - 5));
         ImGui::InvisibleButton(("out_" + std::to_string(id)).c_str(), ImVec2(10, 10));
         if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
@@ -155,22 +172,48 @@ void NodeUIManager::RenderConnections() {
             pendingConnection.startPos = outPin;
         }
 
-        // Input pin
-        ImGui::SetCursorScreenPos(ImVec2(inPin.x - 5, inPin.y - 5));
-        ImGui::InvisibleButton(("in_" + std::to_string(id)).c_str(), ImVec2(10, 10));
-        if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left) && pendingConnection.isDragging) {
-            connections.push_back({ pendingConnection.fromNodeID, id });
-            graph.Connect(pendingConnection.fromNodeID, id);
-            graph.ProcessAll();
-            pendingConnection = PendingConnection();
+        BaseNode* toNode = graph.nodes[id];
+        if (BlendNode* blend = dynamic_cast<BlendNode*>(toNode)) {
+            ImVec2 inPinA = ImVec2(state.position.x, state.position.y + 50);
+            ImVec2 inPinB = ImVec2(state.position.x, state.position.y + 90);
+
+            ImGui::SetCursorScreenPos(ImVec2(inPinA.x - 5, inPinA.y - 5));
+            ImGui::InvisibleButton(("inA_" + std::to_string(id)).c_str(), ImVec2(10, 10));
+            if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left) && pendingConnection.isDragging) {
+                blend->SetInputA(graph.nodes[pendingConnection.fromNodeID]->GetOutput());
+                connections.push_back({ pendingConnection.fromNodeID, id });
+                graph.ProcessAll();
+                pendingConnection = PendingConnection();
+            }
+
+            ImGui::SetCursorScreenPos(ImVec2(inPinB.x - 5, inPinB.y - 5));
+            ImGui::InvisibleButton(("inB_" + std::to_string(id)).c_str(), ImVec2(10, 10));
+            if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left) && pendingConnection.isDragging) {
+                blend->SetInputB(graph.nodes[pendingConnection.fromNodeID]->GetOutput());
+                connections.push_back({ pendingConnection.fromNodeID, id });
+                graph.ProcessAll();
+                pendingConnection = PendingConnection();
+            }
+
+            drawList->AddCircleFilled(inPinA, 5.0f, IM_COL32(0, 255, 255, 255));
+            drawList->AddCircleFilled(inPinB, 5.0f, IM_COL32(0, 255, 255, 255));
+        }
+        else {
+            ImVec2 inPin = ImVec2(state.position.x, state.position.y + 70);
+            ImGui::SetCursorScreenPos(ImVec2(inPin.x - 5, inPin.y - 5));
+            ImGui::InvisibleButton(("in_" + std::to_string(id)).c_str(), ImVec2(10, 10));
+            if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left) && pendingConnection.isDragging) {
+                connections.push_back({ pendingConnection.fromNodeID, id });
+                graph.Connect(pendingConnection.fromNodeID, id);
+                graph.ProcessAll();
+                pendingConnection = PendingConnection();
+            }
+            drawList->AddCircleFilled(inPin, 5.0f, IM_COL32(0, 255, 255, 255));
         }
 
-        // Draw pins
         drawList->AddCircleFilled(outPin, 5.0f, IM_COL32(255, 255, 0, 255));
-        drawList->AddCircleFilled(inPin, 5.0f, IM_COL32(0, 255, 255, 255));
     }
 
-    // Render live dragging connection
     if (pendingConnection.isDragging) {
         ImVec2 mousePos = ImGui::GetIO().MousePos;
         ImVec2 p1 = pendingConnection.startPos;
@@ -180,8 +223,7 @@ void NodeUIManager::RenderConnections() {
         drawList->AddBezierCubic(p1, cp1, cp2, p2, IM_COL32(255, 255, 0, 255), 2.0f);
     }
     if (pendingConnection.isDragging && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
-        pendingConnection = PendingConnection(); // Reset state
+        pendingConnection = PendingConnection();
     }
-
-
 }
+

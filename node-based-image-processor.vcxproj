@@ -135,6 +135,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\BaseNode.cpp" />
     <ClCompile Include="src\Connection.cpp" />
+    <ClCompile Include="src\filters\BlendNode.cpp" />
     <ClCompile Include="src\filters\BlurNode.cpp" />
     <ClCompile Include="src\filters\BrightnessContrastNode.cpp" />
     <ClCompile Include="src\filters\ColorChannelSplitterNode.cpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="include\BaseNode.h" />
     <ClInclude Include="include\Connection.h" />
+    <ClInclude Include="include\filters\BlendNode.h" />
     <ClInclude Include="include\filters\BlurNode.h" />
     <ClInclude Include="include\filters\BrightnessContrastNode.h" />
     <ClInclude Include="include\filters\ColorChannelSplitterNode.h" />
