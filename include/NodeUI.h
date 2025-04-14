@@ -20,7 +20,7 @@ struct PendingConnection {
     int fromNodeID = -1;
     ImVec2 startPos;
 };
-
+extern PendingConnection pendingConnection;
 class NodeUIManager {
 public:
     std::unordered_map<int, NodeUIState> nodeStates;

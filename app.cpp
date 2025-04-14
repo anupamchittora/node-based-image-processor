@@ -14,6 +14,7 @@
 #include "ImageInputNode.h"
 #include "NodeGraph.h"
 #include "filters/GrayscaleNode.h"
+#include "filters/BrightnessContrastNode.h"
 
 GrayscaleNode grayNode(3);
 ImageInputNode inputNode(1);
@@ -21,10 +22,12 @@ OutputNode outputNode(2);
 NodeGraph graph;
 GLFWwindow* window;
 NodeUIManager uiManager;
+BrightnessContrastNode bcNode(4);
 
 std::vector<BaseNode*> nodes = {
     &inputNode,
     &grayNode,
+    & bcNode,
     &outputNode
 };
 
@@ -59,6 +62,7 @@ bool App::Init()
     graph.AddNode(&inputNode);
     graph.AddNode(&grayNode);
     graph.AddNode(&outputNode);
+    graph.AddNode(&bcNode);
 
     // Load image
     inputNode.SetImagePath("D:\\55.jpg");

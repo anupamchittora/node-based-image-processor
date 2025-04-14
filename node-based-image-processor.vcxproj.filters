@@ -54,6 +54,9 @@
     <ClCompile Include="src\filters\GrayscaleNode.cpp">
       <Filter>Source Files\src\filters</Filter>
     </ClCompile>
+    <ClCompile Include="src\filters\BrightnessContrastNode.cpp">
+      <Filter>Source Files\src\filters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -81,6 +84,9 @@
       <Filter>Header Files\include</Filter>
     </ClInclude>
     <ClInclude Include="include\filters\GrayscaleNode.h">
+      <Filter>Header Files\include\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="include\filters\BrightnessContrastNode.h">
       <Filter>Header Files\include\filters</Filter>
     </ClInclude>
   </ItemGroup>
