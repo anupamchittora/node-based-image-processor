@@ -3,6 +3,7 @@
 #include "OutputNode.h"
 #include <imgui_internal.h>
 #include "filters/BrightnessContrastNode.h"
+#include "filters/BlurNode.h"
 
 #include "NodeGraph.h"
 PendingConnection pendingConnection;
@@ -57,6 +58,15 @@ void NodeUIManager::RenderNode(BaseNode& node) {
 
         if (updated) {
             bc->Process();
+            graph.ProcessAll();
+        }
+    }
+    if (BlurNode* blur = dynamic_cast<BlurNode*>(&node)) {
+        ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
+
+        ImGui::Text("Radius");
+        if (ImGui::SliderInt(("##blur_" + std::to_string(id)).c_str(), &blur->radius, 1, 20)) {
+            blur->Process();
             graph.ProcessAll();
         }
     }

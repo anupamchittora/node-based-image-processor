@@ -135,7 +135,9 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\BaseNode.cpp" />
     <ClCompile Include="src\Connection.cpp" />
+    <ClCompile Include="src\filters\BlurNode.cpp" />
     <ClCompile Include="src\filters\BrightnessContrastNode.cpp" />
+    <ClCompile Include="src\filters\ColorChannelSplitterNode.cpp" />
     <ClCompile Include="src\filters\GrayscaleNode.cpp" />
     <ClCompile Include="src\ImageInputNode.cpp" />
     <ClCompile Include="src\NodeGraph.cpp" />
@@ -146,7 +148,9 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="include\BaseNode.h" />
     <ClInclude Include="include\Connection.h" />
+    <ClInclude Include="include\filters\BlurNode.h" />
     <ClInclude Include="include\filters\BrightnessContrastNode.h" />
+    <ClInclude Include="include\filters\ColorChannelSplitterNode.h" />
     <ClInclude Include="include\filters\GrayscaleNode.h" />
     <ClInclude Include="include\ImageInputNode.h" />
     <ClInclude Include="include\NodeGraph.h" />

@@ -15,6 +15,8 @@
 #include "NodeGraph.h"
 #include "filters/GrayscaleNode.h"
 #include "filters/BrightnessContrastNode.h"
+#include "filters/ColorChannelSplitterNode.h"
+#include "filters/BlurNode.h"
 
 GrayscaleNode grayNode(3);
 ImageInputNode inputNode(1);
@@ -23,13 +25,19 @@ NodeGraph graph;
 GLFWwindow* window;
 NodeUIManager uiManager;
 BrightnessContrastNode bcNode(4);
+ColorChannelSplitterNode channelNode(5);  // Use unique ID
+BlurNode blurNode(6);
 
 std::vector<BaseNode*> nodes = {
     &inputNode,
     &grayNode,
-    & bcNode,
+    &bcNode,
+    &channelNode,
+    &blurNode,
     &outputNode
 };
+
+
 
 bool App::Init()
 {
@@ -63,6 +71,8 @@ bool App::Init()
     graph.AddNode(&grayNode);
     graph.AddNode(&outputNode);
     graph.AddNode(&bcNode);
+    graph.AddNode(&channelNode);
+    graph.AddNode(&blurNode);
 
     // Load image
     inputNode.SetImagePath("D:\\55.jpg");

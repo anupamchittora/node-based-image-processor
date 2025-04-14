@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <opencv2/opencv.hpp>
 
 class BaseNode {
 public:
@@ -13,6 +14,7 @@ public:
 
     BaseNode(int id, const std::string& name);
     virtual ~BaseNode() {}
+    virtual cv::Mat GetOutput() const { return cv::Mat(); }
 
     virtual void Process() = 0;
 };

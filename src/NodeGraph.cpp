@@ -1,10 +1,12 @@
-#include "NodeGraph.h"
+﻿#include "NodeGraph.h"
 #include "filters/GrayscaleNode.h"
 #include "filters/BrightnessContrastNode.h"
 #include "OutputNode.h"
 #include "ImageInputNode.h"
+#include "filters/ColorChannelSplitterNode.h"
+#include "filters/BlurNode.h"
 
-// ? This is the correct file for these
+// ✅ This is the correct file for these
 void NodeGraph::AddNode(BaseNode* node) {
     nodes[node->id] = node;
 }
@@ -28,6 +30,18 @@ void NodeGraph::ProcessAll() {
             output = &gray->outputImage;
         else if (BrightnessContrastNode* bc = dynamic_cast<BrightnessContrastNode*>(fromNode))
             output = &bc->outputImage;
+        else if (ColorChannelSplitterNode* splitter = dynamic_cast<ColorChannelSplitterNode*>(fromNode))
+            output = &splitter->rChannel;  // Default to red channel for now
+        else if (BlurNode* blur = dynamic_cast<BlurNode*>(fromNode))
+            output = &blur->outputImage;
+
+        
+
+        if (BlurNode* blurTarget = dynamic_cast<BlurNode*>(toNode))
+            blurTarget->SetInput(*output);
+
+        if (ColorChannelSplitterNode* target = dynamic_cast<ColorChannelSplitterNode*>(toNode))
+            target->SetInput(*output);
 
         if (output && !output->empty()) {
             if (BrightnessContrastNode* bcTarget = dynamic_cast<BrightnessContrastNode*>(toNode))
