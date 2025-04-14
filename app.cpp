@@ -13,35 +13,26 @@
 #include <iostream>
 #include "ImageInputNode.h"
 #include "NodeGraph.h"
+#include "filters/GrayscaleNode.h"
 
+GrayscaleNode grayNode(3);
+ImageInputNode inputNode(1);
+OutputNode outputNode(2);
 NodeGraph graph;
-
 GLFWwindow* window;
 NodeUIManager uiManager;
-ImageInputNode inputNode(1);
-
-
-OutputNode outputNode(2); // ID = 2
-cv::Mat testImage;
-
-// Sample node list (for testing visual layout)
 
 std::vector<BaseNode*> nodes = {
-     &inputNode,
-    &outputNode  // add more nodes as needed
+    &inputNode,
+    &grayNode,
+    &outputNode
 };
 
-void SetupTestConnections() {
-    uiManager.connections = {
-        {1, 2}  // Connect Image Input → Output Node
-    };
-}
 bool App::Init()
 {
     if (!glfwInit())
         return false;
 
-    // OpenGL settings
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -50,20 +41,13 @@ bool App::Init()
     if (!window) return false;
 
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // Enable vsync
+    glfwSwapInterval(1);
 
     if (glewInit() != GLEW_OK) {
         std::cerr << "Failed to initialize GLEW\n";
         return false;
     }
-    graph.AddNode(&inputNode);
-    graph.AddNode(&outputNode);
 
-    // (optional) Add initial connection if testing without UI
-    // graph.Connect(inputNode.id, outputNode.id);
-    // graph.ProcessAll();
-
-    // ImGui setup
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -71,15 +55,22 @@ bool App::Init()
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
-    // ⬇️ Add this after ImGui setup
-    inputNode.SetImagePath("D:\\55.jpg");
-    outputNode.SetInput(inputNode.outputImage);
+    // NodeGraph setup
+    graph.AddNode(&inputNode);
+    graph.AddNode(&grayNode);
+    graph.AddNode(&outputNode);
 
-    SetupTestConnections(); // keep this at the end
+    // Load image
+    inputNode.SetImagePath("D:\\55.jpg");
+
+    // Clear any default UI connections
+    uiManager.connections.clear();
+    graph.connections.clear();
+
+    graph.ProcessAll();
 
     return true;
 }
-
 
 void App::Run()
 {
@@ -91,15 +82,13 @@ void App::Run()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // 🌟 Toolbar
         ImGui::Begin("Toolbar");
         if (ImGui::Button("Open Image")) { /* TODO */ }
         ImGui::SameLine();
         if (ImGui::Button("Save Image")) { /* TODO */ }
         ImGui::End();
 
-        // 🎨 Canvas
-        ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize); // Make canvas fullscreen
+        ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
         ImGui::SetNextWindowPos(ImVec2(0, 0));
 
         ImGui::Begin("Canvas", nullptr,
@@ -112,27 +101,18 @@ void App::Run()
 
         ImDrawList* drawList = ImGui::GetWindowDrawList();
 
-        // Draw nodes
         for (BaseNode* node : nodes) {
             uiManager.RenderNode(*node);
         }
 
         uiManager.RenderConnections();
-        // Render image preview from OutputNode
-        
-
-
 
         ImGui::End();
 
-
-
-        // ⚙️ Properties
         ImGui::Begin("Properties");
         ImGui::Text("Adjust node parameters here.");
         ImGui::End();
 
-        // Render
         ImGui::Render();
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);

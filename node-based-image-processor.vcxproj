@@ -135,6 +135,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\BaseNode.cpp" />
     <ClCompile Include="src\Connection.cpp" />
+    <ClCompile Include="src\filters\GrayscaleNode.cpp" />
     <ClCompile Include="src\ImageInputNode.cpp" />
     <ClCompile Include="src\NodeGraph.cpp" />
     <ClCompile Include="src\NodeUI.cpp" />
@@ -144,6 +145,7 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="include\BaseNode.h" />
     <ClInclude Include="include\Connection.h" />
+    <ClInclude Include="include\filters\GrayscaleNode.h" />
     <ClInclude Include="include\ImageInputNode.h" />
     <ClInclude Include="include\NodeGraph.h" />
     <ClInclude Include="include\NodeTypes.h" />

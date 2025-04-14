@@ -1,12 +1,15 @@
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\vc143.pdb
+d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\outputnode.obj
+d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\nodeui.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\nodegraph.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\imageinputnode.obj
+d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\grayscalenode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\connection.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\basenode.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\main.obj
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\app.obj
-d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\nodeui.obj
-d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\outputnode.obj
+d:\anupam\node-based-image-processor\x64\release\node-based-image-processor.exe
+d:\anupam\node-based-image-processor\x64\release\node-based-image-processor.pdb
 d:\anupam\node-based-image-processor\x64\release\glew32.dll
 d:\anupam\node-based-image-processor\x64\release\glfw3.dll
 d:\anupam\node-based-image-processor\x64\release\opencv_core4.dll
@@ -24,8 +27,6 @@ d:\anupam\node-based-image-processor\x64\release\tiff.dll
 d:\anupam\node-based-image-processor\x64\release\liblzma.dll
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\node-based-image-processor.ipdb
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\node-based-image-processor.iobj
-d:\anupam\node-based-image-processor\x64\release\node-based-image-processor.pdb
-d:\anupam\node-based-image-processor\x64\release\node-based-image-processor.exe
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\node-bas.9c921a2c.tlog\cl.command.1.tlog
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\node-bas.9c921a2c.tlog\cl.items.tlog
 d:\anupam\node-based-image-processor\node-based-image-processor\x64\release\node-bas.9c921a2c.tlog\cl.read.1.tlog

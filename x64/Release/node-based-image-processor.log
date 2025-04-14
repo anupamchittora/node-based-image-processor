@@ -1,2 +1,9 @@
-﻿  OutputNode.cpp
-LINK : fatal error LNK1104: cannot open file 'D:\Anupam\node-based-image-processor\x64\Release\node-based-image-processor.exe'
+﻿  app.cpp
+  Generating code
+  24 of 612 functions ( 3.9%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    33 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  node-based-image-processor.vcxproj -> D:\Anupam\node-based-image-processor\x64\Release\node-based-image-processor.exe
+  'pwsh.exe' is not recognized as an internal or external command,
+  operable program or batch file.

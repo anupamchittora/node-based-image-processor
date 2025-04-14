@@ -19,6 +19,12 @@
     <Filter Include="Source Files\src">
       <UniqueIdentifier>{11711b2c-065c-489d-8c21-fe5a16e5fbd4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\include\filters">
+      <UniqueIdentifier>{fb9321e0-4d9d-4b9e-a57d-130ade4b0044}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\filters">
+      <UniqueIdentifier>{b1c62e09-8f25-426a-87bf-6c9596b125dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -45,6 +51,9 @@
     <ClCompile Include="src\OutputNode.cpp">
       <Filter>Source Files\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\filters\GrayscaleNode.cpp">
+      <Filter>Source Files\src\filters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -70,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="include\OutputNode.h">
       <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\filters\GrayscaleNode.h">
+      <Filter>Header Files\include\filters</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
