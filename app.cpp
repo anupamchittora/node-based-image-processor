@@ -113,7 +113,8 @@ void App::Run()
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        ImGui::Begin("Toolbox");
+        ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_Always);
+        ImGui::Begin("Toolbox", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
         static const char* nodeTypes[] = {
             "Image Input", "Output Node", "Grayscale", "Brightness/Contrast",
@@ -136,33 +137,7 @@ void App::Run()
         ImGui::End();
 
 
-        ImGui::Begin("Toolbar");
-
-        if (ImGui::Button("Open Image")) {
-            const char* filters[] = { "*.jpg", "*.png", "*.bmp" };
-            const char* file = tinyfd_openFileDialog("Select Image", "", 3, filters, NULL, 0);
-            if (file && strlen(file) > 0) {
-                inputNode.SetImagePath(file);
-                if (!inputNode.outputImage.empty()) {
-                    graph.ProcessAll();
-                }
-                else {
-                    std::cerr << "[Error] Could not load image from: " << file << "\n";
-                }
-            }
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("Save Image")) { 
-            const char* filters[] = { "*.png", "*.jpg", "*.bmp" };
-            const char* file = tinyfd_saveFileDialog("Save Image", "output.png", 3, filters, nullptr);
-
-            if (file && strlen(file) > 0) {
-                if (!outputNode.SaveImage(file)) {
-                    std::cerr << "[App] Failed to save image.\n";
-                }
-            }
-        }
-        ImGui::End();
+       
 
         ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
         ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -201,10 +176,115 @@ void App::Run()
 
         ImGui::EndChild();
         ImGui::End();
+        ImGui::SetNextWindowSize(ImVec2(300, 200), ImGuiCond_Always);
+        ImGui::Begin("Properties", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
-        ImGui::Begin("Properties");
+
         ImGui::Text("Adjust node parameters here.");
+
+        int selectedID = uiManager.selectedNodeID;
+        if (selectedID != -1 && graph.nodes.count(selectedID)) {
+            BaseNode* node = graph.nodes[selectedID];
+
+            if (BrightnessContrastNode* bc = dynamic_cast<BrightnessContrastNode*>(node)) {
+                ImGui::Text("Brightness/Contrast Settings");
+                ImGui::SliderFloat("Brightness", &bc->brightness, -100.0f, 100.0f);
+                ImGui::SliderFloat("Contrast", &bc->contrast, 0.0f, 3.0f);
+                if (ImGui::Button("Reset Brightness")) bc->brightness = 0.0f;
+                if (ImGui::Button("Reset Contrast")) bc->contrast = 1.0f;
+                bc->Process(); graph.ProcessAll();
+            }
+
+            if (BlurNode* blur = dynamic_cast<BlurNode*>(node)) {
+                ImGui::Text("Gaussian Blur Settings");
+                if (ImGui::SliderInt("Radius", &blur->radius, 1, 20)) {
+                    blur->Process(); graph.ProcessAll();
+                }
+            }
+
+            if (ThresholdNode* th = dynamic_cast<ThresholdNode*>(node)) {
+                ImGui::Text("Threshold Settings");
+                if (ImGui::SliderInt("Threshold", &th->thresholdValue, 0, 255)) {
+                    th->Process(); graph.ProcessAll();
+                }
+            }
+
+            if (EdgeDetectionNode* edge = dynamic_cast<EdgeDetectionNode*>(node)) {
+                ImGui::Text("Edge Detection Settings");
+                const char* modes[] = { "Sobel", "Canny" };
+                int current = (edge->mode == EdgeMode::Sobel) ? 0 : 1;
+                if (ImGui::Combo("Mode", &current, modes, IM_ARRAYSIZE(modes))) {
+                    edge->mode = (current == 0) ? EdgeMode::Sobel : EdgeMode::Canny;
+                    edge->Process(); graph.ProcessAll();
+                }
+
+                if (edge->mode == EdgeMode::Sobel) {
+                    if (ImGui::SliderInt("Kernel Size", &edge->kernelSize, 1, 7)) {
+                        if (edge->kernelSize % 2 == 0) edge->kernelSize += 1;
+                        edge->Process(); graph.ProcessAll();
+                    }
+                }
+                else {
+                    if (ImGui::SliderInt("Canny Thresh 1", &edge->cannyThreshold1, 0, 255)) {
+                        edge->Process(); graph.ProcessAll();
+                    }
+                    if (ImGui::SliderInt("Canny Thresh 2", &edge->cannyThreshold2, 0, 255)) {
+                        edge->Process(); graph.ProcessAll();
+                    }
+                }
+            }
+
+            if (BlendNode* blend = dynamic_cast<BlendNode*>(node)) {
+                ImGui::Text("Blend Settings");
+                const char* blendModes[] = { "Normal", "Multiply", "Screen", "Overlay", "Difference" };
+                int current = static_cast<int>(blend->mode);
+                if (ImGui::Combo("Blend Mode", &current, blendModes, IM_ARRAYSIZE(blendModes))) {
+                    blend->mode = static_cast<BlendMode>(current);
+                    blend->Process(); graph.ProcessAll();
+                }
+
+                if (ImGui::SliderFloat("Opacity", &blend->opacity, 0.0f, 1.0f)) {
+                    blend->Process(); graph.ProcessAll();
+                }
+            }
+
+            if (NoiseNode* noise = dynamic_cast<NoiseNode*>(node)) {
+                ImGui::Text("Noise Generator Settings");
+                ImGui::SliderInt("Width", &noise->width, 64, 1024);
+                ImGui::SliderInt("Height", &noise->height, 64, 1024);
+                ImGui::SliderFloat("Scale", &noise->scale, 1.0f, 100.0f);
+                ImGui::SliderInt("Seed", &noise->seed, 0, 1000);
+
+                if (ImGui::Button("Generate")) {
+                    noise->Process();
+                    graph.ProcessAll();
+                }
+            }
+
+            if (ConvolutionNode* conv = dynamic_cast<ConvolutionNode*>(node)) {
+                ImGui::Text("Convolution Filter");
+                const char* presets[] = { "Sharpen", "Edge", "Emboss" };
+                static int selectedPreset = 0;
+                if (ImGui::Combo("Preset", &selectedPreset, presets, IM_ARRAYSIZE(presets))) {
+                    conv->SetPreset(presets[selectedPreset]);
+                    conv->Process(); graph.ProcessAll();
+                }
+
+                ImGui::Text("Kernel:");
+                for (int i = 0; i < conv->kernel.size(); ++i) {
+                    if (i % conv->kernelSize != 0) ImGui::SameLine();
+                    ImGui::PushItemWidth(40);
+                    if (ImGui::InputFloat(("##k" + std::to_string(i)).c_str(), &conv->kernel[i], 0.1f, 1.0f, "%.1f")) {
+                        conv->Process(); graph.ProcessAll();
+                    }
+                    ImGui::PopItemWidth();
+                }
+            }
+        }
+
+
         ImGui::End();
+
 
         ImGui::Render();
         int display_w, display_h;

@@ -27,6 +27,7 @@ public:
     std::vector<ConnectionVisual> connections;
     PendingConnection pendingConnection;
     void SpawnNode(const std::string& type);
+    int selectedNodeID = -1;
 
     void RenderNode(BaseNode& node);
     void RenderConnections();

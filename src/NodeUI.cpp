@@ -21,6 +21,7 @@ void NodeUIManager::RenderNode(BaseNode& node) {
     std::string name = node.name;
     NodeUIState& state = nodeStates[id];
     ImVec2 scrollOffset(ImGui::GetScrollX(), ImGui::GetScrollY());
+    
 
     if (state.position.x == 0 && state.position.y == 0)
         state.position = ImVec2(100 + id * 180, 250);
@@ -36,6 +37,7 @@ void NodeUIManager::RenderNode(BaseNode& node) {
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     drawList->AddRectFilled(start, end, IM_COL32(40, 40, 50, 255), 6.0f);
     drawList->AddRect(start, end, IM_COL32(255, 255, 255, 255), 6.0f);
+    
     drawList->AddText(ImVec2(start.x + 10, start.y + 10), IM_COL32(255, 255, 255, 255), name.c_str());
 
     // ... keep existing UI logic as-is ...
@@ -76,20 +78,23 @@ void NodeUIManager::RenderNode(BaseNode& node) {
 
     if (BrightnessContrastNode* bc = dynamic_cast<BrightnessContrastNode*>(&node)) {
         ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
-        bool updated = false;
+        
 
         float controlWidth = nodeSize.x - 20;
         ImGui::PushItemWidth(controlWidth);
-        ImGui::Text("Brightness");
-        updated |= ImGui::SliderFloat(("##brightness_" + std::to_string(id)).c_str(), &bc->brightness, -100.0f, 100.0f);
-        if (ImGui::Button(("Reset B##" + std::to_string(id)).c_str())) {
+        ImGui::Text("Brightness/Contrast Settings");
+
+        bool updated = false;
+
+        updated |= ImGui::SliderFloat("Brightness", &bc->brightness, -100.0f, 100.0f);
+        updated |= ImGui::SliderFloat("Contrast", &bc->contrast, 0.0f, 3.0f);
+
+        if (ImGui::Button("Reset Brightness")) {
             bc->brightness = 0.0f;
             updated = true;
         }
 
-        ImGui::Text("Contrast");
-        updated |= ImGui::SliderFloat(("##contrast_" + std::to_string(id)).c_str(), &bc->contrast, 0.0f, 3.0f);
-        if (ImGui::Button(("Reset C##" + std::to_string(id)).c_str())) {
+        if (ImGui::Button("Reset Contrast")) {
             bc->contrast = 1.0f;
             updated = true;
         }
@@ -211,7 +216,12 @@ void NodeUIManager::RenderNode(BaseNode& node) {
         state.position.x += ImGui::GetIO().MouseDelta.x;
         state.position.y += ImGui::GetIO().MouseDelta.y;
     }
-
+    if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+        selectedNodeID = id;  // Select this node
+    }
+    if (id == selectedNodeID) {
+        drawList->AddRect(start, end, IM_COL32(0, 255, 0, 255), 6.0f, 0, 3.0f);
+    }
     ImGui::EndGroup();
     ImGui::PopID();
 }
