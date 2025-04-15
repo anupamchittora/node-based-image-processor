@@ -8,7 +8,10 @@ public:
     cv::Mat outputImage;
 
     int radius = 3;  // Default blur radius
-    cv::Mat GetOutput() const override { return outputImage; }
+    cv::Mat GetOutput() const override {
+        return outputImage;
+    }
+
 
     BlurNode(int id);
     void SetInput(const cv::Mat& image);

@@ -10,6 +10,12 @@ public:
     int height = 256;
     float scale = 10.0f;
     int seed = 0;
+    cv::Mat GetOutput() const override {
+        return outputImage;
+    }
+    void SetInput(const cv::Mat&) override {
+        std::cerr << "[NoiseNode] Does not accept input.\n";
+    }
 
     NoiseNode(int id);
     void Process() override;

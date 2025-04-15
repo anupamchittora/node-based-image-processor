@@ -12,7 +12,10 @@ public:
 
     BrightnessContrastNode(int id);
     void SetInput(const cv::Mat& image);
-    cv::Mat GetOutput() const override { return outputImage; }
+    cv::Mat GetOutput() const override {
+        return outputImage;
+    }
+
 
     void Process() override;
 };

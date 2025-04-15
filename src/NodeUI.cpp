@@ -11,11 +11,10 @@
 #include "NodeGraph.h"
 #include "filters/ConvolutionNode.h"
 #include "filters/ColorChannelSplitterNode.h"
-
+#include "NodeFactory.h" // needed for CreateNodeByName
 #include "tinyfiledialogs/tinyfiledialogs.h"
 PendingConnection pendingConnection;
 extern NodeGraph graph;
-
 void NodeUIManager::RenderNode(BaseNode& node) {
     int id = node.id;
     std::string name = node.name;
@@ -230,6 +229,7 @@ void NodeUIManager::RenderConnections() {
     ImVec2 scrollOffset(ImGui::GetScrollX(), ImGui::GetScrollY());
     ImDrawList* drawList = ImGui::GetWindowDrawList();
 
+    // Draw all existing connections
     for (size_t i = 0; i < connections.size(); ++i) {
         const auto& conn = connections[i];
         ImVec2 fromPos = nodeStates[conn.fromID].position;
@@ -241,15 +241,12 @@ void NodeUIManager::RenderConnections() {
         ImVec2 cp1 = ImVec2(fromPos.x + 50, fromPos.y);
         ImVec2 cp2 = ImVec2(toPos.x - 50, toPos.y);
 
-        ImDrawList* drawList = ImGui::GetWindowDrawList();
         drawList->AddBezierCubic(fromPos, cp1, cp2, toPos, IM_COL32(200, 200, 100, 255), 3.0f);
 
-        // 🧠 Add a small invisible button at the center of the curve
         ImVec2 midPoint = ImVec2((fromPos.x + toPos.x) * 0.5f, (fromPos.y + toPos.y) * 0.5f);
         ImGui::SetCursorScreenPos(ImVec2(midPoint.x - 8, midPoint.y - 8));
         ImGui::InvisibleButton(("conn_" + std::to_string(i)).c_str(), ImVec2(16, 16));
 
-        // 🗑️ If right-clicked, remove the connection
         if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
             connections.erase(connections.begin() + i);
             graph.connections.erase(
@@ -259,11 +256,11 @@ void NodeUIManager::RenderConnections() {
                     }),
                 graph.connections.end());
             graph.ProcessAll();
-            break;  // since the connection list is now changed
+            break;
         }
     }
 
-
+    // Draw input/output pins
     for (const auto& [id, state] : nodeStates) {
         ImVec2 outPin = ImVec2(state.position.x + 200 - scrollOffset.x, state.position.y + 70 - scrollOffset.y);
         ImGui::SetCursorScreenPos(ImVec2(outPin.x - 5, outPin.y - 5));
@@ -284,6 +281,7 @@ void NodeUIManager::RenderConnections() {
             if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left) && pendingConnection.isDragging) {
                 blend->SetInputA(graph.nodes[pendingConnection.fromNodeID]->GetOutput());
                 connections.push_back({ pendingConnection.fromNodeID, id });
+                graph.Connect(pendingConnection.fromNodeID, id);  // ✅ critical line
                 graph.ProcessAll();
                 pendingConnection = PendingConnection();
             }
@@ -293,6 +291,7 @@ void NodeUIManager::RenderConnections() {
             if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left) && pendingConnection.isDragging) {
                 blend->SetInputB(graph.nodes[pendingConnection.fromNodeID]->GetOutput());
                 connections.push_back({ pendingConnection.fromNodeID, id });
+                graph.Connect(pendingConnection.fromNodeID, id);  // ✅ critical line
                 graph.ProcessAll();
                 pendingConnection = PendingConnection();
             }
@@ -306,7 +305,7 @@ void NodeUIManager::RenderConnections() {
             ImGui::InvisibleButton(("in_" + std::to_string(id)).c_str(), ImVec2(10, 10));
             if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left) && pendingConnection.isDragging) {
                 connections.push_back({ pendingConnection.fromNodeID, id });
-                graph.Connect(pendingConnection.fromNodeID, id);
+                graph.Connect(pendingConnection.fromNodeID, id);  // ✅ standard node connection
                 graph.ProcessAll();
                 pendingConnection = PendingConnection();
             }
@@ -316,37 +315,29 @@ void NodeUIManager::RenderConnections() {
         drawList->AddCircleFilled(outPin, 5.0f, IM_COL32(255, 255, 0, 255));
     }
 
+    // Draw pending wire while dragging
     if (pendingConnection.isDragging) {
         ImVec2 mousePos = ImGui::GetIO().MousePos;
         ImVec2 p1 = pendingConnection.startPos;
-        ImVec2 p2 = mousePos;
         ImVec2 cp1 = ImVec2(p1.x + 50, p1.y);
-        ImVec2 cp2 = ImVec2(p2.x - 50, p2.y);
-        ImDrawList* drawList = ImGui::GetWindowDrawList();
-        drawList->AddBezierCubic(p1, cp1, cp2, p2, IM_COL32(255, 255, 0, 255), 2.0f);
+        ImVec2 cp2 = ImVec2(mousePos.x - 50, mousePos.y);
+        drawList->AddBezierCubic(p1, cp1, cp2, mousePos, IM_COL32(255, 255, 0, 255), 2.0f);
     }
+
     if (pendingConnection.isDragging && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
         pendingConnection = PendingConnection();
     }
 }
-void NodeUIManager::SpawnNode(const std::string& type) {
-    static int nextID = 1000; // 👈 Avoid collision with manually added nodes
+extern std::vector<BaseNode*> nodes;  // 👈 Add this at the top if not already
 
-    BaseNode* newNode = nullptr;
+void NodeUIManager::SpawnNode(const std::string& name) {
+    static int nextID = 1000;
+    BaseNode* newNode = CreateNodeByName(name, nextID++);
+    if (!newNode) return;
 
-    if (type == "ImageInput") newNode = new ImageInputNode(nextID);
-    else if (type == "Output") newNode = new OutputNode(nextID);
-    else if (type == "BrightnessContrast") newNode = new BrightnessContrastNode(nextID);
-    else if (type == "ChannelSplitter") newNode = new ColorChannelSplitterNode(nextID);
-    else if (type == "Blur") newNode = new BlurNode(nextID);
-    else if (type == "Threshold") newNode = new ThresholdNode(nextID);
-    else if (type == "Edge") newNode = new EdgeDetectionNode(nextID);
-    else if (type == "Blend") newNode = new BlendNode(nextID);
-    else if (type == "Noise") newNode = new NoiseNode(nextID);
+    nodes.push_back(newNode);
+    graph.AddNode(newNode);  // optional if graph.nodes is not populated here
+    graph.nodes[newNode->id] = newNode;  // ✅ Critical!
+    nodeStates[newNode->id].position = ImVec2(300, 300);
 
-    if (newNode) {
-        graph.AddNode(newNode);
-        nodeStates[newNode->id].position = ImVec2(300, 300);  // Default spawn position
-        nextID++;
-    }
 }

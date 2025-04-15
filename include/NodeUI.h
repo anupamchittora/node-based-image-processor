@@ -4,6 +4,7 @@
 #include <imgui.h>
 #include <vector>
 #include "BaseNode.h"
+extern std::vector<BaseNode*> nodes;
 
 struct NodeUIState {
     ImVec2 position;

@@ -62,32 +62,16 @@ void NodeGraph::ProcessAll() {
         else if (ConvolutionNode* conv = dynamic_cast<ConvolutionNode*>(fromNode))
             output = &conv->outputImage;
 
-        if (ConvolutionNode* convTarget = dynamic_cast<ConvolutionNode*>(toNode))
-            convTarget->SetInput(*output);
-        if (ThresholdNode* thTarget = dynamic_cast<ThresholdNode*>(toNode))
-            thTarget->SetInput(*output);
-        if (BlurNode* blurTarget = dynamic_cast<BlurNode*>(toNode))
-            blurTarget->SetInput(*output);
-        if (EdgeDetectionNode* edgeTarget = dynamic_cast<EdgeDetectionNode*>(toNode))
-            edgeTarget->SetInput(*output);
-        if (ColorChannelSplitterNode* target = dynamic_cast<ColorChannelSplitterNode*>(toNode))
-            target->SetInput(*output);
-        if (OutputNode* out = dynamic_cast<OutputNode*>(toNode))
-            out->SetInput(*output);
-        if (output && !output->empty()) {
-            if (BrightnessContrastNode* bcTarget = dynamic_cast<BrightnessContrastNode*>(toNode))
-                bcTarget->SetInput(*output);
-            else if (GrayscaleNode* grayTarget = dynamic_cast<GrayscaleNode*>(toNode))
-                grayTarget->SetInput(*output);
-            else if (OutputNode* out = dynamic_cast<OutputNode*>(toNode))
-                out->SetInput(*output);
-        }
-        if (BlendNode* blendTarget = dynamic_cast<BlendNode*>(toNode)) {
-            if (blendTarget->inputA.empty())
-                blendTarget->SetInputA(*output);
-            else
-                blendTarget->SetInputB(*output);
-        }
+        if (auto* conv = dynamic_cast<ConvolutionNode*>(toNode)) conv->SetInput(*output);
+        else if (auto* blur = dynamic_cast<BlurNode*>(toNode)) blur->SetInput(*output);
+        else if (auto* edge = dynamic_cast<EdgeDetectionNode*>(toNode)) edge->SetInput(*output);
+        else if (auto* bc = dynamic_cast<BrightnessContrastNode*>(toNode)) bc->SetInput(*output);
+        else if (auto* gray = dynamic_cast<GrayscaleNode*>(toNode)) gray->SetInput(*output);
+        else if (auto* th = dynamic_cast<ThresholdNode*>(toNode)) th->SetInput(*output);
+        else if (auto* out = dynamic_cast<OutputNode*>(toNode)) out->SetInput(*output);
+        else if (auto* split = dynamic_cast<ColorChannelSplitterNode*>(toNode)) split->SetInput(*output);
+        // skip NoiseNode and ImageInputNode as they don’t accept input
+
 
     }
 }

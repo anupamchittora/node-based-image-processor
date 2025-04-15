@@ -13,6 +13,9 @@ public:
     int kernelSize = 3; // 3 or 5
 
     ConvolutionNode(int id);
+    cv::Mat GetOutput() const override {
+        return outputImage;
+    }
 
     void SetInput(const cv::Mat& image);
     void Process() override;

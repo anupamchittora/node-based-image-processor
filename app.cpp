@@ -126,12 +126,8 @@ void App::Run()
         ImGui::Combo("Node Type", &selected, nodeTypes, IM_ARRAYSIZE(nodeTypes));
 
         if (ImGui::Button("Add Node")) {
-            BaseNode* newNode = CreateNodeByName(nodeTypes[selected], nextID++);
-            if (newNode) {
-                nodes.push_back(newNode);
-                graph.AddNode(newNode);
-                uiManager.nodeStates[newNode->id].position = ImVec2(300, 300); // spawn pos
-            }
+            uiManager.SpawnNode(nodeTypes[selected]);  // let SpawnNode handle it
+
         }
 
         ImGui::End();
