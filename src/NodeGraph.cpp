@@ -21,17 +21,27 @@ void NodeGraph::Connect(int fromID, int toID) {
 
     BaseNode* from = nodes[fromID];
     BaseNode* to = nodes[toID];
-
     if (!from || !to) return;
 
-    // 🔄 Handle BlendNode's multiple inputs
     if (BlendNode* blend = dynamic_cast<BlendNode*>(to)) {
         if (blend->inputA.empty())
-            blend->inputA = from->GetOutput();
+            blend->SetInputA(from->GetOutput());  // ✅ Correct way
         else
-            blend->inputB = from->GetOutput();
+            blend->SetInputB(from->GetOutput());  // ✅ Correct way
+    }
+    else {
+        // Generic connection
+        if (auto* conv = dynamic_cast<ConvolutionNode*>(to)) conv->SetInput(from->GetOutput());
+        else if (auto* blur = dynamic_cast<BlurNode*>(to)) blur->SetInput(from->GetOutput());
+        else if (auto* edge = dynamic_cast<EdgeDetectionNode*>(to)) edge->SetInput(from->GetOutput());
+        else if (auto* bc = dynamic_cast<BrightnessContrastNode*>(to)) bc->SetInput(from->GetOutput());
+        else if (auto* gray = dynamic_cast<GrayscaleNode*>(to)) gray->SetInput(from->GetOutput());
+        else if (auto* th = dynamic_cast<ThresholdNode*>(to)) th->SetInput(from->GetOutput());
+        else if (auto* out = dynamic_cast<OutputNode*>(to)) out->SetInput(from->GetOutput());
+        else if (auto* split = dynamic_cast<ColorChannelSplitterNode*>(to)) split->SetInput(from->GetOutput());
     }
 }
+
 
 
 void NodeGraph::ProcessAll() {

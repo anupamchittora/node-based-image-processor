@@ -15,6 +15,7 @@
 #include "tinyfiledialogs/tinyfiledialogs.h"
 PendingConnection pendingConnection;
 extern NodeGraph graph;
+extern std::vector<BaseNode*> nodes;  // 👈 Add this at the top if not already
 void NodeUIManager::RenderNode(BaseNode& node) {
     int id = node.id;
     std::string name = node.name;
@@ -73,6 +74,17 @@ void NodeUIManager::RenderNode(BaseNode& node) {
                 graph.ProcessAll();
             }
         }
+    }
+    if (ColorChannelSplitterNode* splitter = dynamic_cast<ColorChannelSplitterNode*>(&node)) {
+        float controlWidth = nodeSize.x - 20;
+        ImGui::PushItemWidth(controlWidth);
+        ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
+        const char* items[] = { "Red", "Green", "Blue", "Alpha" };
+        int selected = static_cast<int>(splitter->selectedOutput);
+        if (ImGui::Combo(("##channel_" + std::to_string(id)).c_str(), &selected, items, IM_ARRAYSIZE(items))) {
+            splitter->selectedOutput = static_cast<ChannelOutput>(selected);
+        }
+        ImGui::PopItemWidth();
     }
 
     if (BrightnessContrastNode* bc = dynamic_cast<BrightnessContrastNode*>(&node)) {
@@ -142,6 +154,28 @@ void NodeUIManager::RenderNode(BaseNode& node) {
 
         if (ImGui::SliderFloat(("Opacity##" + std::to_string(id)).c_str(), &blend->opacity, 0.0f, 1.0f)) {
             blend->Process();
+            graph.ProcessAll();
+        }
+        ImGui::PopItemWidth();
+    }
+    if (NoiseNode* noise = dynamic_cast<NoiseNode*>(&node)) {
+        float controlWidth = nodeSize.x - 20;
+        ImGui::PushItemWidth(controlWidth);
+        if (noise->textureID) {
+            ImGui::SetCursorScreenPos(ImVec2(start.x + 10, start.y + 30));
+            ImTextureID tex = (ImTextureID)(intptr_t)noise->textureID;
+            ImGui::Image(tex, ImVec2(180, 100));
+        }
+
+        // Noise sliders...
+        ImGui::Text("Noise Parameters:");
+        ImGui::SliderInt("Width", &noise->width, 64, 1024);
+        ImGui::SliderInt("Height", &noise->height, 64, 1024);
+        ImGui::SliderFloat("Scale", &noise->scale, 1.0f, 100.0f);
+        ImGui::SliderInt("Seed", &noise->seed, 0, 999);
+
+        if (ImGui::Button("Generate")) {
+            noise->Process();
             graph.ProcessAll();
         }
         ImGui::PopItemWidth();
@@ -260,7 +294,7 @@ void NodeUIManager::RenderConnections() {
         }
     }
 
-    // Draw input/output pins
+    // Draw input/output pins and handle dragging
     for (const auto& [id, state] : nodeStates) {
         ImVec2 outPin = ImVec2(state.position.x + 200 - scrollOffset.x, state.position.y + 70 - scrollOffset.y);
         ImGui::SetCursorScreenPos(ImVec2(outPin.x - 5, outPin.y - 5));
@@ -273,15 +307,18 @@ void NodeUIManager::RenderConnections() {
 
         BaseNode* toNode = graph.nodes[id];
         if (BlendNode* blend = dynamic_cast<BlendNode*>(toNode)) {
+            // BlendNode has two input pins
             ImVec2 inPinA = ImVec2(state.position.x - scrollOffset.x, state.position.y + 50 - scrollOffset.y);
             ImVec2 inPinB = ImVec2(state.position.x - scrollOffset.x, state.position.y + 90 - scrollOffset.y);
 
             ImGui::SetCursorScreenPos(ImVec2(inPinA.x - 5, inPinA.y - 5));
             ImGui::InvisibleButton(("inA_" + std::to_string(id)).c_str(), ImVec2(10, 10));
             if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left) && pendingConnection.isDragging) {
-                blend->SetInputA(graph.nodes[pendingConnection.fromNodeID]->GetOutput());
-                connections.push_back({ pendingConnection.fromNodeID, id });
-                graph.Connect(pendingConnection.fromNodeID, id);  // ✅ critical line
+                int fromID = pendingConnection.fromNodeID;
+                BaseNode* from = graph.nodes[fromID];
+                blend->SetInputA(from->GetOutput());
+                connections.push_back({ fromID, id });
+                graph.connections.push_back({ fromID, id }); // add to graph manually
                 graph.ProcessAll();
                 pendingConnection = PendingConnection();
             }
@@ -289,9 +326,11 @@ void NodeUIManager::RenderConnections() {
             ImGui::SetCursorScreenPos(ImVec2(inPinB.x - 5, inPinB.y - 5));
             ImGui::InvisibleButton(("inB_" + std::to_string(id)).c_str(), ImVec2(10, 10));
             if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left) && pendingConnection.isDragging) {
-                blend->SetInputB(graph.nodes[pendingConnection.fromNodeID]->GetOutput());
-                connections.push_back({ pendingConnection.fromNodeID, id });
-                graph.Connect(pendingConnection.fromNodeID, id);  // ✅ critical line
+                int fromID = pendingConnection.fromNodeID;
+                BaseNode* from = graph.nodes[fromID];
+                blend->SetInputB(from->GetOutput());
+                connections.push_back({ fromID, id });
+                graph.connections.push_back({ fromID, id }); // add to graph manually
                 graph.ProcessAll();
                 pendingConnection = PendingConnection();
             }
@@ -304,18 +343,21 @@ void NodeUIManager::RenderConnections() {
             ImGui::SetCursorScreenPos(ImVec2(inPin.x - 5, inPin.y - 5));
             ImGui::InvisibleButton(("in_" + std::to_string(id)).c_str(), ImVec2(10, 10));
             if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left) && pendingConnection.isDragging) {
-                connections.push_back({ pendingConnection.fromNodeID, id });
-                graph.Connect(pendingConnection.fromNodeID, id);  // ✅ standard node connection
+                int fromID = pendingConnection.fromNodeID;
+                BaseNode* from = graph.nodes[fromID];
+                graph.Connect(fromID, id);
+                connections.push_back({ fromID, id });
                 graph.ProcessAll();
                 pendingConnection = PendingConnection();
             }
+
             drawList->AddCircleFilled(inPin, 5.0f, IM_COL32(0, 255, 255, 255));
         }
 
         drawList->AddCircleFilled(outPin, 5.0f, IM_COL32(255, 255, 0, 255));
     }
 
-    // Draw pending wire while dragging
+    // Pending connection wire while dragging
     if (pendingConnection.isDragging) {
         ImVec2 mousePos = ImGui::GetIO().MousePos;
         ImVec2 p1 = pendingConnection.startPos;
@@ -328,7 +370,8 @@ void NodeUIManager::RenderConnections() {
         pendingConnection = PendingConnection();
     }
 }
-extern std::vector<BaseNode*> nodes;  // 👈 Add this at the top if not already
+
+
 
 void NodeUIManager::SpawnNode(const std::string& name) {
     static int nextID = 1000;

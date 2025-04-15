@@ -3,7 +3,7 @@
 #include <iostream>
 
 ColorChannelSplitterNode::ColorChannelSplitterNode(int id)
-    : BaseNode(id, "Channel Splitter") {
+    : BaseNode(id, "Channel Splitter"), selectedOutput(RED) {  // Default to RED
 }
 
 void ColorChannelSplitterNode::SetInput(const cv::Mat& image) {
@@ -33,4 +33,14 @@ void ColorChannelSplitterNode::Process() {
     std::cout << "[ColorChannelSplitterNode] Channels split (R/G/B";
     if (hasAlpha) std::cout << "/A";
     std::cout << ")\n";
+}
+
+cv::Mat ColorChannelSplitterNode::GetOutput() const {
+    switch (selectedOutput) {
+    case RED: return rChannel;
+    case GREEN: return gChannel;
+    case BLUE: return bChannel;
+    case ALPHA: return hasAlpha ? aChannel : cv::Mat();
+    }
+    return cv::Mat();
 }
