@@ -111,6 +111,10 @@ vcpkg install boost
 ## 📸 Screenshots
 
 > _Include screenshots here showing the node editor with an image loaded, nodes connected, and effects applied._
+> ![Screenshot 2025-04-15 145804](https://github.com/user-attachments/assets/bef9f5c7-11b1-4b69-be9b-40dbfb291aa9)
+![Screenshot 2025-04-15 145835](https://github.com/user-attachments/assets/d203211a-a35a-4b12-8130-de63be459c50)
+
+![Screenshot 2025-04-15 150113](https://github.com/user-attachments/assets/9876e912-bc2d-4653-bade-20d0a5671e6d)
 
 ---
 
@@ -125,5 +129,5 @@ vcpkg install boost
 
 ## 👤 Authors
 
-> Your Name (e.g., Anupam)  
-> [GitHub Repository Link]
+> Anupam Chittora
+> [[GitHub Repository Link](https://github.com/anupamchittora/node-based-image-processor)]
