@@ -1,3 +1,7 @@
+![GitHub repo size](https://img.shields.io/github/repo-size/anupamchittora/node-based-image-processor)
+![GitHub stars](https://img.shields.io/github/stars/anupamchittora/node-based-image-processor?style=social)
+![GitHub forks](https://img.shields.io/github/forks/anupamchittora/node-based-image-processor?style=social)
+![GitHub last commit](https://img.shields.io/github/last-commit/anupamchittora/node-based-image-processor)
 
 # 🎨 Node-Based Image Manipulation Interface
 
